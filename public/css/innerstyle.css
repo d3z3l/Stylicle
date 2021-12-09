@@ -1,0 +1,27 @@
+.bg-pink-500 {
+    background-color: #bc1f30;
+}
+.hover\:text-white:hover {
+    color: #fff;
+}
+.hover\:bg-pink-600:hover {
+    background-color:#1a1515;
+}
+.sidebar .sidebar_header img {
+    width: 60px;
+}
+.to-red-400 {
+    --tw-gradient-to: #bc1f30;
+}
+.from-pink-500 {
+    --tw-gradient-from: #bc1f30;
+}
+.to-pink-600 {
+    --tw-gradient-to: none;
+}
+.from-yellow-600 {
+    --tw-gradient-from: none;
+}
+header .header_inner .left-side #logo img {
+    width: 50px;
+}

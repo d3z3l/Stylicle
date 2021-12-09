@@ -1,0 +1,111 @@
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+.title {
+  margin: 0;
+  line-height: 1.15;
+  font-size: 10rem;
+}
+.overlay {
+  height: 100%;
+  background-color: '#ffffff00';
+  width: 100%;
+  position: fixed;
+  z-index: 1;
+}
+.form_message {
+  color: red;
+  font-size: small;
+  text-align: center;
+}
+.Primery_color {
+  color: #bc1f30!important;
+  font-size: small;
+  text-align: center;
+}
+.Primery_color a {
+  color: #fff!important;
+  background-color: #bc1f2f97!important;
+}
+.pagination li a {
+  color: #bc1f30!important;
+}
+
+.Profile_Settings_tab {
+  margin: 0px 8px;
+}
+.uk-active {
+  border-bottom: 4px solid #bc1f30; 
+  
+  
+}
+.uk-active a {
+  color: #bc1f30!important;
+  margin: 10px 0px;
+ 
+}
+.Profile_Settings_tab a {
+  color:gray;
+ 
+}
+.workinghoursinput{
+  width: 148px;
+  padding: 10px;
+}
+header {
+  background-color: rgba(255, 255, 255, 0)!important;
+  display: unset!important;
+  border-bottom: none!important;
+}
+.container {
+  padding-top:0px!important
+}
+.datepicker-modal {
+  position:fixed!important;
+  z-index:9999!important;
+}
+.bookingmodal_2 .rdt .form-control {
+  width:200px!important
+}
+.rdt {
+  display: inline-block;
+  width: 100%;
+}
+.btn-info {
+  background-color: #bc1f30!important;
+  border-color: #bc1f30!important;
+}
+.selected_time_slote {
+  color: #00A39E;
+    background: #EAF8F8;
+    border-color: #00A39E;
+}
+.selector{
+  font-size: 15px!important;
+  height: 49px!important;
+}
+.pointer{
+  cursor: pointer!important;
+}
+@media (max-width: 2100px) {
+  header {
+      min-height: 67px !important;
+      height: auto;
+      position: fixed !important;
+      background: #fff;
+      margin-top: -2px;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
