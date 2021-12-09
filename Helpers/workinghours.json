@@ -1,0 +1,127 @@
+[{
+  "_id": {
+    "$oid": "6142e970aeb765066eb13a51"
+  },
+  "starting_time": 28800,
+  "end_time": 64800,
+  "off": 0,
+  "day": "1",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6142e971aeb765066eb13a52"
+  },
+  "starting_time": 28800,
+  "end_time": 64800,
+  "off": 0,
+  "day": "2",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6142e971aeb765066eb13a53"
+  },
+  "starting_time": 28800,
+  "end_time": 64800,
+  "off": 0,
+  "day": "3",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6142e971aeb765066eb13a54"
+  },
+  "starting_time": 28800,
+  "end_time": 64800,
+  "off": 0,
+  "day": "4",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6142e971aeb765066eb13a55"
+  },
+  "starting_time": 28800,
+  "end_time": 64800,
+  "off": 0,
+  "day": "5",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6142e971aeb765066eb13a56"
+  },
+  "starting_time": 28800,
+  "end_time": 64800,
+  "off": 0,
+  "day": "6",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6142e971aeb765066eb13a57"
+  },
+  "starting_time": 28800,
+  "end_time": 64800,
+  "off": 0,
+  "day": "7",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6142f5efaeb765066eb13a5a"
+  },
+  "starting_time": 28800,
+  "end_time": 64800,
+  "off": 0,
+  "day": "1",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6142f5efaeb765066eb13a5b"
+  },
+  "starting_time": 28800,
+  "end_time": 64800,
+  "off": 0,
+  "day": "2",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6142f5efaeb765066eb13a5c"
+  },
+  "starting_time": 28800,
+  "end_time": 64800,
+  "off": 0,
+  "day": "3",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6142f5efaeb765066eb13a5d"
+  },
+  "starting_time": 28800,
+  "end_time": 64800,
+  "off": 0,
+  "day": "4",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6142f5efaeb765066eb13a5e"
+  },
+  "starting_time": 28800,
+  "end_time": 64800,
+  "off": 0,
+  "day": "5",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6142f5efaeb765066eb13a5f"
+  },
+  "starting_time": 28800,
+  "end_time": 64800,
+  "off": 0,
+  "day": "6",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6142f5efaeb765066eb13a60"
+  },
+  "starting_time": 28800,
+  "end_time": 64800,
+  "off": 0,
+  "day": "7",
+  "__v": 0
+}]

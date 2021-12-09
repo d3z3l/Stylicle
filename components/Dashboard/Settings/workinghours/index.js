@@ -5,6 +5,8 @@ import WorkinghoursHelper from "../../../../Helpers/WorkinghoursHelper";
 import Datetime from "react-datetime";
 import $ from "jquery";
 import Fields from "./Fields";
+import { toast,ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 var moment = require("moment");
 
 class Workinghours extends React.Component {
@@ -36,21 +38,40 @@ class Workinghours extends React.Component {
    this.state.totall.forEach(element => {
      if (element.update) {
       WorkinghoursHelper.update(element).then((resp)=>{
-        console.log(resp)
+        
       })
      }
    });
-    
+   toast.success('Success!', {
+    position: "top-right",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    });
   };
 
   render() {
     return (
       <>
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
         <div class="grid lg:grid-cols-3 mt-12 gap-8">
           <div>
             <br/>
-            <h3 class="text-xl mb-2">Workinghours</h3>
-            <p> Lorem ipsum dolor sit amet nibh consectetuer adipiscing elit</p>
+            <h3 class="text-xl mb-2">Business Hours</h3>
+            <p> Add or change your working hours here</p>
           </div>
           <div class="bg-white rounded-md lg:shadow-lg shadow col-span-2">
             <Fields

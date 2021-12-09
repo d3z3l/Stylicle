@@ -252,7 +252,13 @@ transition: 0.3s;
   top: 50%;
   left:8%;
   transform: translate(0, -50%);
-  max-width: 680px;
+  max-width: 747;
+  width: 100%; 
+}
+.banner_content_popup{
+  z-index: 1;
+  
+  max-width: 747;
   width: 100%; 
 }
 .banner_content h1{
@@ -1039,50 +1045,6 @@ transform: none;
   display: inline-block;
   margin-bottom: 20px;
 }
-html {
-  font-size: 15px !important;
-}
-.sidebar .sidebar_inner ul li a {
-  padding: 12px 15px;
-}
-.welcome {
-  font-size: 14px;
-}
-.welcome span {
-  font-size: 20px;
-  display: block;
-}
-.MuiTablePagination-input {
-  font-size: 15px;
-}
-.MuiSelect-icon {
-  top: calc(50% - 20px);
-  right: -8px;
-}
-.MuiTypography-body2 {
-  font-size: 16px;
-}
-.MuiIconButton-root {
-  padding: 6px 12px;
-}
-.MuiTable-root {
-  margin-top: 20px;
-}
-.MuiMenuItem-root {
-  font-size: 16px;
-}
-.MuiTableCell-root {
-  font-size: 12px;
-}
-.PrivateSwitchBase-root-23 {
-  padding: 0;
-}
-.MuiTablePagination-input {
-  background: #fff !important;
-}
-.MuiTable-root { 
-  margin-top: 20px; 
-}
 @media(max-width:991.98px){
 .navbar-light .navbar-toggler {
   display: none;
@@ -1108,11 +1070,11 @@ font-size: 15px;
 font-size: 14px;
 }
 #solution_wrepp p {
-  font-size: 15px;
+  font-size: 15px; 
   line-height: 22px;
 }	
 #solution_wrepp ul li {
-font-size: 15px;
+font-size: 15px; 
 }
 #testimonial_wrepp .text-content blockquote {
   font-size: 20px;
@@ -1283,6 +1245,10 @@ footer .col {
   flex: inherit;
   max-width: 50%;
 }	
+.pac-container {
+  z-index:99999!important ;
+}	
+
 }
 @media(max-width:480.98px){
 .header-form {

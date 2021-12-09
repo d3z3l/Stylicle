@@ -75,7 +75,6 @@ class ViewSeller extends React.Component {
     for (let i = 0; i < this.state.reservations.length; i++) {
       let element = this.state.reservations[i]
       if (element.time_slot.start_time <= this.state.service_time_slote.start_time &&  element.time_slot.end_time >= this.state.service_time_slote.end_time) {
-        alert('error')
         return false
       }
       
@@ -118,6 +117,10 @@ class ViewSeller extends React.Component {
     this.setState({ min_date: mindate.toDate(), max_date: maxdate.toDate() });
   };
   handleSelectDate = (time) => {
+    console.warn(time, "time test")
+    console.warn(time, "time test")
+    console.warn(time, "time test")
+    console.warn("sikandar ali")
     let data = {
       path: "service_time_slots/60ab3a33833b3e059d5a9893",
       type: "POST",
@@ -182,7 +185,6 @@ class ViewSeller extends React.Component {
     for (let i = 0; i < this.state.reservations.length; i++) {
       let element2 = this.state.reservations[i]
       if (element2.time_slot.start_time <= element.start_time &&  element2.time_slot.end_time >= element.end_time) {
-        alert('error')
         return false
       }
     }
@@ -275,13 +277,11 @@ class ViewSeller extends React.Component {
                   </div>
 
                   {
-                    //  alert(this.props.user_data.assignservices.length),
 
                     this.state.Assign_services!=null?(
                       // this.state.Assign_services.length!=0?(
                         this.state.Assign_services.map((val,index)=>(
 
-                        //  alert(index111),
 
                           <Services  onPress={()=> {$('.bookingmodal_2').show(),$('.bookingmodal_1').hide()}} onBook={()=>this.setState({service_val:val._id,service_price:val.price,service_duration:val.duration,service_title:val.services.title,morning:'',afternon:'',evening:''})} title={val.services.title} duration={val.duration} modal_close={'no'} price={val.price} />
                         ))
@@ -347,7 +347,7 @@ class ViewSeller extends React.Component {
                         <div class="bookbtnrow">
                           <div>
                             <div class="purify">
-                            <strong>${this.state.service_price}</strong>
+                              <strong>${this.state.service_price}</strong>
                             </div>
                             <span class="purify_2vd">{this.state.service_duration}min</span>
                           </div>
@@ -361,7 +361,6 @@ class ViewSeller extends React.Component {
                           Book
                         </button>
                       </div>
-                      
                     </div>
                     <hr/>
                     <div>
@@ -380,7 +379,6 @@ class ViewSeller extends React.Component {
                     {
                       this.state.reservations.map((val,index)=>(
                         console.log(val.time_slot.assignservices.services),
-                        // alert(val.time_slot.assignservices.services[0].title),
 
                         <Reservations title={val.time_slot.assignservices.services[0].title}  start_time={val.time_slot.start_time} end_time={val.time_slot.end_time} price={val.time_slot.assignservices.price} />
                          
@@ -503,12 +501,10 @@ class ViewSeller extends React.Component {
           <div class="mb-0">
             
           {
-            //  alert(this.props.user_data.assignservices.length),
 
             this.state.Assign_services!=null?(
               // this.state.Assign_services.length!=0?(
                 this.state.Assign_services.map((val,index)=>(
-                //  alert(index),
                 
                   <Services onBook={()=>this.setState({service_val:val._id,service_price:val.price,service_duration:val.duration,service_title:val.services.title,morning:'',afternon:'',evening:''})} title={val.services.title} duration={val.duration} price={val.price} />
                 ))

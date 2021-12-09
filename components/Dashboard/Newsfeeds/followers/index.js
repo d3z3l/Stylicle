@@ -59,7 +59,7 @@ export default class Header extends React.Component {
                              {val.follower.name}
                             </span>
                             <span class="block capitalize text-sm">
-                            {val.follower.email}
+                            {val.follower.address}
                             </span>
                           </div>
                         </div>

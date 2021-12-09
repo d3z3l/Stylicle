@@ -17,12 +17,19 @@ export default class Header extends React.Component {
       password: "",
       c_password: "",
       messages: "",
+      checked:false
     };
   }
   handleLogin = () => {
-
+    // alert(this.state.checked)
+    // return false
+   
     if (this.state.password != this.state.c_password) {
       this.setState({ messages: 'password dose not match' });
+      return false;
+    }
+    if (!this.state.checked) {
+      this.setState({ messages: 'please accept the terms and conditions' });
       return false;
     }
     var data = {
@@ -52,9 +59,26 @@ export default class Header extends React.Component {
 
   render() {
     return (
-      <div>
-        <div class="lg:p-12 max-w-md max-w-xl lg:my-0 my-12 mx-auto p-6 space-y-">
-          <h1 class="lg:text-3xl text-xl font-semibold mb-6"> Sign in</h1>
+      <div class="row m-0 h-100 align-items-center justify-content-md-center">
+        <div class="authimg">
+            <img
+              src="/images/login-img.png"
+              alt=""
+              class="img-fluid aun dexlog"
+            />
+          </div>
+        <div class="col-sm-6 ml-auto">
+          <div class="outhlogo">
+            <Link href="/" >
+              <img
+                src="/images/logo2.png"
+                alt=""
+                class="img-fluid aun dexlog"
+              />
+              </Link>
+          </div>
+          <div class="outhform">
+          <h1 class="lg:text-3xl text-xl font-semibold mb-6"> Sign up</h1>
           <p class="mb-2 text-black text-lg">
             {" "}
             Register to manage your account{" "}
@@ -102,7 +126,7 @@ export default class Header extends React.Component {
               onChange={(text) => [
                 this.setState({ password: text.target.value }),
               ]}
-              type="text"
+              type="password"
               placeholder="Password"
               class="bg-gray-200 mb-2 shadow-none  dark:bg-gray-800"
               style={{ border: "1px solid #d3d5d8 !important" }}
@@ -111,19 +135,23 @@ export default class Header extends React.Component {
               onChange={(text) => [
                 this.setState({ c_password: text.target.value }),
               ]}
-              type="text"
+              type="password"
               placeholder="Confirm Password"
               class="bg-gray-200 mb-2 shadow-none  dark:bg-gray-800"
               style={{ border: "1px solid #d3d5d8 !important" }}
             />
             <div class="flex justify-start my-4 space-x-1">
-              <div class="checkbox">
-                <input type="checkbox" id="chekcbox1" checked />
+              <div class="checkbox d-flex">
+                <input type="checkbox" onClick={()=>this.setState({checked:!this.state.checked})} id="chekcbox1" checked={this.state.checked} />
                 <label for="chekcbox1">
-                  <span class="checkbox-icon"></span> I Agree
+                  <span class="checkbox-icon"></span> I Agree {" "}
+                </label>
+                <label class="pl-1" for="chekcbox1">
+                to the Terms and Conditions 
                 </label>
               </div>
-              <a href="#"> Terms and Conditions</a>
+                
+              {/* <a href="#"> Terms and Conditions</a> */}
             </div>
             <p class="form_message">{this.state.messages}</p>
             {/* <Link href="/auth/login"> */}
@@ -131,7 +159,7 @@ export default class Header extends React.Component {
               onClick={this.handleLogin}
               class="bg-gradient-to-br from-pink-500 py-3 rounded-md text-white text-xl to-red-400 w-full"
             >
-              Login
+              Register
             </button>
             {/* </Link> */}
             <div class="text-center mt-5 space-x-2">
@@ -143,6 +171,7 @@ export default class Header extends React.Component {
               </Link>
             </div>
           {/* </form> */}
+          </div>
         </div>
       </div>
     );

@@ -2,20 +2,25 @@ import React from "react";
 import { connect } from "react-redux";
 import CategoriesHelper from "../../../../Helpers/CategoriesHelper";
 import dynamic from "next/dynamic";
+import { faPencilAlt,faTrash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import config from "../../../../config";
+import SweetAlert from 'react-bootstrap-sweetalert';
+
 const MUIDataTable = dynamic(() => import('../../../../node_modules/mui-datatables-next'), {
   ssr: false
 });
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
-const columns = ['Sr#',"Name","Status"];
+const columns = ['Sr#',"Name","Status",'Action'];
 const options = {
   filterType: 'checkbox',
-  downloadOptions: { 
+  downloadOptions: {
     filename: 'eventTable.csv',
   },  print: false,
   viewColumns: false,
   filterTable: false,
   delete: false,
-  
+  show:false
 };
 
 
@@ -23,7 +28,8 @@ class Categories extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      categories: [["",""]]
+      categories: [["",""]],
+      update_cat_id:''
     };
   }
   getMuiTheme = () => createMuiTheme({
@@ -78,16 +84,145 @@ class Categories extends React.Component {
             />
             <span class="switch-button"></span>
           </label>
-        </div>
+        </div>,
+        <>
+          <div class='mx-2 d-inline' >
+            <FontAwesomeIcon
+            data-toggle="modal"
+            data-target="#exampleModalCenter"
+            onClick={()=>this.modal(element)}
+              style={{
+                color: config.primaryColor,
+                fontSize:'20px',
+                cursor: "pointer"
+              }}
+              icon={faPencilAlt}
+            />
+          </div>
+          <FontAwesomeIcon
+          onClick={()=>this.setState({show:true,delete_service_id:element._id})}
+            style={{
+              color: config.primaryColor,
+              fontSize:'20px',
+              cursor: "pointer"
+            }}
+            icon={faTrash}
+          />
+        </>
       ])
     }
       this.setState({categories})
     });
   };
 
+  modal=(e)=>{
+    console.log(e);
+    this.setState({
+      title:e.title,
+      update_cat_id:e._id,
+    })
+    $('#exampleModalCenter').show()
+
+  }
+  update=()=>{
+    let data = {
+      title: this.state.title,
+      // services: this.state.services_id,
+    };
+    CategoriesHelper.Update(this.state.update_cat_id,data).then((resp) => {
+      this.setState({message:''})
+      this.hendalGetCaterory()
+    });
+  }
+  hendalDeleteCategory= async (id)=>{
+    await CategoriesHelper.Delete(id).then((resp)=>{
+      this.hendalGetCaterory()
+    });  
+     this.setState({show:false})
+   }
   render() {
     return (
       <>
+
+        {
+          this.state.show?
+              <SweetAlert
+                warning
+                showCancel
+                confirmBtnText="Yes, delete it!"
+                confirmBtnBsStyle="danger"
+                title="Are you sure?"
+                onConfirm={()=> this.hendalDeleteCategory(this.state.delete_service_id)}
+                onCancel={()=>this.setState({show:false})}
+                focusCancelBtn
+              >
+                You will not be able to recover this record !
+              </SweetAlert>
+            :null
+        }
+
+
+        <div
+          class="modal"
+          id="exampleModalCenter"
+          tabindex="-1"
+          role="dialog"
+          aria-labelledby="exampleModalCenterTitle"
+          aria-hidden="true"
+        >
+          <div class="modal-dialog modal-dialog-centered bookingmodal modal-lg" role="document" >
+            <div class="modal-content">
+              <div class="modal-header">
+                {/* <h5 class="modal-title" id="exampleModalCenterTitle">
+                  Powered by <img src="images/footerlogo.svg" alt="" />
+                </h5> */}
+                <button
+                  type="button"
+                  class="close remort_close"
+                  data-dismiss="modal"
+                  aria-label="Close"
+                >
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <div class="bookingmodal_2">
+                  <h4 >
+                    <i class="fas fa-chevron-left mr-2 float-left"></i> Edit Services
+                  </h4>
+                
+                  <hr />
+                  <form>
+                    <div class="mb-3">
+                      <label>Name</label>
+                      <input
+                        onChange={(text) => [
+                          this.setState({ title: text.target.value }),
+                        ]}
+                        type="text"
+                        placeholder="Name"
+                        class="form-control"
+                        value={this.state.title}
+                      />
+                    </div>
+
+                    <a 
+                      onClick={this.update} 
+                      class="btn button bg-blue-700 btn-info  "
+                      type="button"
+                      data-dismiss="modal"
+                      aria-label="Close"
+                      >
+                        
+                      Update
+                    </a>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="">
           <div class="container">
             <div class="catg_listing">

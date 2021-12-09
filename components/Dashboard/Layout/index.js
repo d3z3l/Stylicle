@@ -3,12 +3,19 @@ import Link from "next/link";
 import AuthHelper from "../../../Helpers/AuthHelper";
 import { connect } from "react-redux";
 import cookie from 'react-cookies'
-
+import Select from 'react-select';
 import config from "../../../config";
 import CategoriesHelper from "../../../Helpers/CategoriesHelper";
-import { faCar,faList } from "@fortawesome/free-solid-svg-icons";
+import { faCar,faList,faTachometerAlt ,faWallet} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Router from 'next/router'
+const jwt = require('jsonwebtoken');
+
+const options = [
+  { value: 'chocolate', label: 'Chocolate' },
+  { value: 'strawberry', label: 'Strawberry' },
+  { value: 'vanilla', label: 'Vanilla' },
+];
  class Layout extends React.Component {
   constructor(props) {
     super(props);
@@ -17,35 +24,42 @@ import Router from 'next/router'
       user_data:'',
       user_name:'',
       user_image:'',
-   
+      sub_menu:0,
+      nav_effect:'/admin/',
+      selectedOption: null,
+      group: [],
+
     };
   }
+
+ 
   componentDidMount=()=>{
+    this.setState({nav_effect:Router.asPath})
           AuthHelper.Varification().then((data)=>{
             if (data.status=='unauthorize') {
               Router.push('/auth/login')
-              // alert(data.status)
             } 
           })
           this.props._user_data(222)
           this.hendalGetCaterory()
-          // setTimeout(() => {
-          //   this.nightmode()
-          // }, 5000);
           this.getUserHendal()
+          this.getUsergroupsHendal()
+  }
+
+  getUsergroupsHendal= async ()=>{
+   await AuthHelper.groups().then((resp)=>{
+     console.log(resp.data.data.group.user);
+     this.setState({group:resp.data.data.group.user})
+    });    
   }
   getUserHendal= async ()=>{
    await AuthHelper.Get().then((resp)=>{
-    this.props._user_fname(resp.data.data.user.name.split(" ").slice(0, -1).join(" "))
+    this.props._user_fname(resp.data.data.user.name)
     this.props._user_lname(resp.data.data.user.name.split(" ").slice(-1).join(" "))
     this.props._user_phone(resp.data.data.user.phone)
     this.props._user_image(resp.data.data.user.image)
     this.props._user_workinghours(resp.data.data.user.workinghours)
     this.props._user_data(resp.data.data.user);
-      // this.setState({
-      //   user_name:resp.data.data.user.name,
-      //   user_image:resp.data.data.user.image,
-      // })
     });    
   }
   nightmode = () => {
@@ -82,37 +96,93 @@ import Router from 'next/router'
 
 
   count = () => {
+    
     // setTimeout(() => {
     this.props._count('fiiidfd');
     // this.props._user_fname('fiiidfd');
     // }, 2000);
   };
   hendalLogout = () => {
-    alert(22)
     cookie.remove('Tokken', { path: '/' })
+  };
+  hendalChangeGroup = async (data) => {
+    console.log(process.env);
+    var data2={id:data}
+    await AuthHelper.groups_tocken(data2).then((resp)=>{
+      cookie.save('Tokken', resp.data.data.tokken , { path: '/' })
+      Router.reload()
+      // console.log(resp.data.data.tokken);
+      // this.setState({group:resp.data.data.group.user})
+     });
+    // alert(process.env.STRIPE_SECRET_KEY)
+    // var tokken =jwt.sign({ _id: data }, process.env.TOKEN_SECRET)
+    // cookie.save('Tokken33', tokken , { path: '/' })
+  };
+  submenu = () => {
+
+    if (this.state.sub_menu=='') {
+      $('.active_menu').addClass('active-submenu')
+      this.setState({sub_menu:'settinge'})
+    } else {
+      this.setState({sub_menu:''})
+      $('.active-submenu').removeClass('active-submenu')
+    }
   };
 
 
   render() {
-
+    const { selectedOption } = this.state;
     return (
       <>
         <div id="wrapper">
-          
+        {
+          this.props.user_data.status=='3'?
+          <div class="bg-dark p-2 d-flex text-light justify-content-center" >
+            The expiration date for your package have passed.
+            <p class=".bg-pink-500 dfdf" style={{"line-height":'27px',"color":'#bc1f30'}}  ><Link href="/packages"  >  Do you want to Renew it?</Link></p>
+          </div>
+          :null
+        }
+        {
+          this.props.user_data.status=='4'?
+          <div class="bg-dark p-2 d-flex text-light justify-content-center" >
+            Your account is listed offline till you clear your dues.
+            <p class=".bg-pink-500 dfdf" style={{"line-height":'27px',"color":'#bc1f30'}}  > Please contact your Admin</p>
+          </div>
+          :null
+        }
           <div class="sidebar">
             <div class="sidebar_header border-b border-gray-200 from-gray-100 to-gray-50 bg-gradient-to-t  uk-visible@s">
-              <a href="index.html">
+            <Link href="/" >
+              <a >
                 <img src="/images/Stylicle-Icon.svg" alt="" />
                 <img src="/images/footerlogo.svg" class="logo_inverse" />
               </a>
-              <a
+            </Link>
+              {/* <a
               onClick={this.nightmode}
                 
                 id="night-mode"
                 class="btn-night-mode"
                 data-tippy-placement="left"
                 title="Switch to dark mode"
-              ></a>
+              ></a> */}
+              {/* <Select
+                value={selectedOption}
+                onChange={this.handleChange}
+                options={options}
+              /> */}
+              <div>
+                <select onChange={(e =>this.hendalChangeGroup(e.target.value) )} className="shadow-none mt-3 ml-3 border rounded py-2"  > 
+                <option value='' disabled selected >select any</option>
+                {
+                  this.state.group.map((val,index)=>(
+                    <option selected={this.props.user_data._id==val._id} value={val._id} >{val.business}</option>
+                  ))
+                }
+                 
+                </select>
+              </div>
             </div>
             <div class="border-b border-gray-20 flex justify-between items-center p-3 pl-5 relative uk-hidden@s">
               <h3 class="text-xl"> Navigation  </h3>
@@ -122,197 +192,234 @@ import Router from 'next/router'
               ></span>
             </div>
             <div class="sidebar_inner" data-simplebar>
-              <Link href="/dashboard/profile">
+             
                 <div class="flex flex-col items-center my-6 uk-visible@s">
                   <div class="bg-gradient-to-tr p-1 rounded-full transition m-0.5 mr-2  w-24 h-24">
                     <img
                     onClick={this.count}
-                    src={config.image_url + this.props.user_image}
+                      src={config.image_url + this.props.user_image}
                       class="bg-gray-200 border-4 border-white rounded-full w-full h-full"
                     />
                   </div>
-                  <a
-                    href="profile.html"
-                    class="text-xl font-medium capitalize mt-4 uk-link-reset"
-                  >
-                    {this.props.user_fname +' '+this.props.user_lname }
-                    {/* {this.state.user_name} */}
-                  
+                  <Link  href={{pathname: '/dashboard/profile' , query: { index: this.props.user_data!=null?this.props.user_data._id:null }}} >
+                  <a class="text-xl font-medium capitalize mt-4 uk-link-reset" >
+                    {this.props.user_fname }              
                   </a>
+                  </Link>
                 </div>
-              </Link>
+             
               <hr class="-mx-4 -mt-1 uk-visible@s" />
               <ul>
-                <li class="active">
-                  <Link href="/dashboard/feed">
-                    <a href="feed.html">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
-                        />
-                      </svg>
-                      <span> Feed </span>{" "}
-                    </a>
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/dashboard/TS">
-                    <a href="#.">
-                    <i class="uil-store"></i>
-                      <span> That's Style </span>{" "}
-                    </a>
-                  </Link>
-                </li>
-                
-                {/* <li>
-                  <Link href="/dashboard/explore">
-                    <a href="explore.html">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                        />
-                      </svg>
-                      <span> Explore </span>{" "}
-                    </a>
-                  </Link>
-                </li> */}
-                {/* <li>
-                  <Link href="/dashboard/massages">
-                    <a href="chat.html">
-                      <i class="uil-location-arrow"></i>
-                      <span> Messages </span> <span class="nav-tag"> 3</span>{" "}
-                    </a>
-                  </Link>
-                </li> */}
-                {/* <li>
-                   <Link href="/dashboard/trending">
-                    <a href="trending.html">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"
-                        />
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"
-                        />
-                      </svg>
-                      <span> Trending </span>{" "}
-                    </a>
-                  </Link>
-                </li> */}
-                <li>
-                  <Link href="/marketpalce/Orders">
-                    <a href="#.">
-                      <FontAwesomeIcon
-                            style={{
-                              width:'16px',
-                            }}
-                            icon={faList}
-                        />
-                      
-                      <span> Order </span>{" "}
-                    </a>
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/marketpalce/MarketplaceCategories/">
-                    <a href="#.">
-                    <i class="uil-store"></i>
-                      <span> Explore Market </span>{" "}
-                    </a>
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/dashboard/settings">
-                    <a href="setting.html">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                        />
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                        />
-                      </svg>
-                      <span> Settings </span>
-                    </a>
-                  </Link>
-                  {/* <ul>
-                  <li>
-                    <a href="setting.html">General </a>
+                {
+                  this.props.user_data.role_id =='2'?(
+                    <li onClick={()=>this.setState({nav_effect:"/admin"})} class={(this.state.nav_effect=="/admin" ? 'active' : '')}>
+                    <Link href="/admin/">
+                      <a href="#.">
+                        <FontAwesomeIcon
+                              style={{
+                                width:'16px',
+                              }}
+                              icon={faTachometerAlt}
+                          />
+                        <span>Dashboard</span>
+                      </a>
+                    </Link>
                   </li>
-                  <li>
-                    <a href="setting.html"> Account setting </a>
+                    
+                  ):null
+                }
+                              
+                {
+                this.props.user_data.role_id=='1' || this.props.user_data.role_id=='0'?(
+                  <>
+                    <li onClick={()=>this.setState({nav_effect:"/dashboard/feed"})} class={(this.state.nav_effect=="/dashboard/feed" ? 'active' : '')}>
+                      <Link href="/dashboard/feed">
+                        <a >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+                            />
+                          </svg>
+                          <span> Feed </span>{" "}
+                        </a>
+                      </Link>
+                    </li>
+                    <li onClick={()=>this.setState({nav_effect:"/dashboard/TS"})} class={(this.state.nav_effect=="/dashboard/TS" ? 'active' : '')}>
+                      <Link href="/dashboard/TS">
+                        <a href="#.">
+                        <i class="uil-store"></i>
+                          <span>Stylar </span>{" "}
+                        </a>
+                      </Link>
+                    </li>
+                    <li onClick={()=>this.setState({nav_effect:"/dashboard/massages"})} class={(this.state.nav_effect=="/dashboard/massages" ? 'active' : '')}>
+                      <Link href="/dashboard/massages">
+                        <a href="#.">
+                        <i class="uil-location-arrow"></i>
+                          <span>Chat </span>{" "}
+                        </a>
+                      </Link>
+                    </li>
+                    <li onClick={()=>this.setState({nav_effect:"/marketpalce/Orders"})} class={(this.state.nav_effect=="/marketpalce/Orders" ? 'active' : '')}>
+                      <Link href="/marketpalce/Orders">
+                        <a href="#.">
+                          <FontAwesomeIcon
+                                style={{
+                                  width:'16px',
+                                }}
+                                icon={faList}
+                            />
+                          
+                          <span> Order </span>{" "}
+                        </a>
+                      </Link>
+                    </li>
+                    {
+                      this.props.user_data.role_id=='0'?
+                      <li onClick={()=>this.setState({nav_effect:"/marketpalce/MarketplaceCategories/"})} class={(this.state.nav_effect=="/marketpalce/MarketplaceCategories/" ? 'active' : '')}>
+                        <Link href="/marketpalce/MarketplaceCategories/">
+                          <a href="#.">
+                          <i class="uil-store"></i>
+                            <span> Explore Market </span>{" "}
+                          </a>
+                        </Link>
+                      </li>
+                      :null
+                    }
+                    <li onClick={()=>this.setState({nav_effect:"/dashboard/settings"})} class={(this.state.nav_effect=="/dashboard/settings" ? 'active' : '')}>
+                      <Link href="/dashboard/settings">
+                        <a >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                            />
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                            />
+                          </svg>
+                          <span> Settings </span>
+                        </a>
+                      </Link>
+                    </li>
+                    {
+                      this.props.user_data.role_id=='1'?
+                      <li onClick={()=>this.setState({nav_effect:"/dashboard/settings/sellerLogin"})} class={(this.state.nav_effect=="/dashboard/settings/sellerLogin" ? 'active' : '')}>
+                        <Link href="/dashboard/settings/sellerLogin">
+                          <a href="#.">
+                          <i class="uil-store"></i>
+                            <span> Add Seller </span>{" "}
+                          </a>
+                        </Link>
+                      </li>
+                      :null
+                    }
+                  </>
+                ):null
+              }{
+                this.props.user_data.role_id=='2'?(
+                  <>
+                    <li onClick={()=>this.setState({nav_effect:"/admin/categories"})} class={(this.state.nav_effect=="/admin/categories" ? 'active' : '')}>
+                    <Link href="/admin/categories">
+                      <a >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+                          />
+                        </svg>
+                        <span>Categories</span>{" "}
+                      </a>
+                    </Link>
                   </li>
-                  <li>
-                    <a href="setting.html">
-                      Billing <span class="nav-tag">3</span>{" "}
-                    </a>
+                  <li onClick={()=>this.setState({nav_effect:"/admin/subcategories"})} class={(this.state.nav_effect=="/admin/subcategories" ? 'active' : '')}>
+                    <Link href="/admin/subcategories">
+                      <a href="#.">
+                      <i class="uil-store"></i>
+                        <span>Sub Sategories</span>{" "}
+                      </a>
+                    </Link>
                   </li>
-                </ul> */}
-                </li>
-                {/* <li>
-                  <Link href="/dashboard/profile">
-                    <a href="profile.html">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                        />
-                      </svg>
-                      <span> My Profile </span>{" "}
-                    </a>
-                  </Link>
-                </li> */}
+                  <li onClick={()=>this.setState({nav_effect:"/admin/services"})} class={(this.state.nav_effect=="/admin/services" ? 'active' : '')}>
+                    <Link href="/admin/services">
+                      <a href="#.">
+                        <FontAwesomeIcon
+                              style={{
+                                width:'16px',
+                              }}
+                              icon={faList}
+                          />
+                        <span>service</span>{" "}
+                      </a>
+                    </Link>
+                  </li>
+                  
+                  <li onClick={()=>this.setState({nav_effect:"/admin/profile"})} class={(this.state.nav_effect=="/admin/profile" ? 'active' : '')}>
+                    <Link href="/admin/profile">
+                      <a href="#.">
+                        <FontAwesomeIcon
+                              style={{
+                                width:'16px',
+                              }}
+                              icon={faList}
+                          />
+                        <span>Profile</span>
+                      </a>
+                    </Link>
+                  </li>
+                  <li class="active_menu">
+                        <a onClick={()=>this.submenu()} > 
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            <span>Users</span>
+                        </a>
+                        <ul>
+                          <Link href="/admin/sellers" class="text-white" >
+                          <li onClick={()=>this.setState({nav_effect:"/admin/sellers"})} class={(this.state.nav_effect=="/admin/sellers" ? 'active' : '')} >
+                              <a >Sellers</a>
+                            </li></Link>
+                          <Link href="/admin/buyers">
+                          <li onClick={()=>this.setState({nav_effect:"/admin/buyers"})} class={(this.state.nav_effect=="/admin/buyers" ? 'active' : '')} >
+                              <a >Buyers</a>
+                            </li></Link>
+                        </ul>
+                    </li>
+                </>
+                ):null
+              }
                 <li>
                   <hr class="my-2" />
                 </li>
                 <li onClick={this.hendalLogout} >
                   <Link  href="/auth/login">
-                    <a href="form-login.html">
+                    <a >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
@@ -340,10 +447,12 @@ import Router from 'next/router'
                     <div class="left-side">
                        
                         <div id="logo" class=" uk-hidden@s">
-                            <a href="index.html">
+                        <Link href="/dashboard/feed" >
+                            <a >
                                 <img src="assets/images/Stylicle-Icon.svg" alt=""/>
                                 <img src="assets/images/footerlogo.svg" class="logo_inverse"/>
                             </a>
+                          </Link>
                         </div>
 
                         <div class="triger" uk-toggle="target: #wrapper ; cls: sidebar-active">
@@ -351,16 +460,21 @@ import Router from 'next/router'
                         </div>
 
                         <div class="header_search">
-                            <input type="text" placeholder="Search.."/>
-                            <div class="icon-search">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                </svg>
-                            </div>
+                            
                         </div>
-
+                        {
+                          this.props.user_data!=222 && this.props.user_data.e_wallet!=undefined?
+                          <p> 
+                            <FontAwesomeIcon
+                              style={{
+                                width:'16px',
+                              }}
+                              icon={faWallet}
+                          />
+                            <b>Wallet balance :</b> ${this.props.user_data.e_wallet[0].ballence}</p>
+                          :null
+                        }
+                
                     </div>
                     <div class="right-side lg:pr-4">
                         <Link href="/dashboard/feed/upload">
@@ -370,236 +484,18 @@ import Router from 'next/router'
                                 mr-1 opacity-90 text-xl uilus-circle"></ion-icon> Upload
                             </a>
                         </Link>
-                        <Link href="/dashboard/TS/upload">
-                            <a href="#"
-                                class="bg-pink-500 flex font-bold  hover:bg-pink-600 hover:text-white inline-block items-center lg:block  mr-4 px-4 py-2 rounded shado text-white">
-                                <ion-icon name="add-circle" class="-mb-1
-                                mr-1 opacity-90 text-xl uilus-circle"></ion-icon> TS Upload
-                            </a>
-                        </Link>
-                        <div uk-dropdown="pos: top-right;mode:click ; animation: uk-animation-slide-bottom-small" class="header_dropdown">
-    
-                           
-                            <div class="px-4 py-3 -mx-5 -mt-4 mb-5 border-b">
-                                <h4>Upload Video</h4>
-                            </div>
-    
-                            
-                            <div class="flex justify-center flex-center text-center dark:text-gray-300">
-    
-                                <div class="flex flex-col choose-upload text-center">
-                                   
-                                    <div class="bg-gray-100 border-2 border-dashed flex flex-col h-24 items-center justify-center relative w-full rounded-lg dark:bg-gray-800 dark:border-gray-600">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-12">
-                                            <path d="M5.5 13a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.977A4.5 4.5 0 1113.5 13H11V9.413l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13H5.5z" />
-                                            <path d="M9 13h2v5a1 1 0 11-2 0v-5z" />
-                                        </svg>
-                                    </div>
-
-                                    <p class="my-3 leading-6"> Do you have a video wants to share us <br/> please upload her ..
-                                    </p>
-                                    <div uk-form-custom>
-                                        <input type="file"/>
-                                        <a href="#" class="button soft-warning small"> Choose file</a>
-                                    </div>
-    
-                                   
-                                </div>
-    
-                                <div class="uk-flex uk-flex-column choose-upload" >
-                                    <div class="mx-auto flex flex-col h-24 items-center justify-center relative w-full rounded-lg">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-12">
-                                            <path fill-rule="evenodd" d="M2 9.5A3.5 3.5 0 005.5 13H9v2.586l-1.293-1.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 15.586V13h2.5a4.5 4.5 0 10-.616-8.958 4.002 4.002 0 10-7.753 1.977A3.5 3.5 0 002 9.5zm9 3.5H9V8a1 1 0 012 0v5z" clip-rule="evenodd" />
-                                        </svg>
-                                    </div>
-                                    <p class="my-3 leading-6"> Import videos from YouTube <br/> Copy / Paste your video link here </p>
-                                    <form class="uk-grid-small" uk-grid>
-                                        <div class="uk-width-expand">
-                                            <input type="text" class="uk-input uk-form-small  bg-gray-200 dark:bg-gray-700" style={{"box-shadow":"none"}} placeholder="Paste link"/>
-                                        </div>
-                                        <div class="uk-width-auto"> <button type="submit" class="button soft-warning -ml-2">
-                                                Import </button> </div>
-                                    </form>
-                                    <a href="#" class="uk-text-muted mt-3 uk-link"
-                                        uk-toggle="target: .choose-upload ; animation: uk-animation-slide-left-small, uk-animation-slide-right-medium; queued: true">
-                                        Or Upload Video </a>
-                                </div>
-    
-                            </div>
-                            <div class="px-4 py-3 -mx-5 -mb-4 mt-5 border-t text-sm dark:border-gray-500 dark:text-gray-500">
-                                Your Video size Must be Maxmium 999MB
-                            </div>
-                        </div>
+                        {
+                          this.props.user_data.role_id !='1'?(
+                            <Link href="/dashboard/TS/upload">
+                                      <a href="#"
+                                          class="bg-pink-500 flex font-bold  hover:bg-pink-600 hover:text-white inline-block items-center lg:block  mr-4 px-4 py-2 rounded shado text-white">
+                                          <ion-icon name="add-circle" class="-mb-1
+                                          mr-1 opacity-90 text-xl uilus-circle"></ion-icon> TS Upload
+                                      </a>
+                                  </Link>
+                          ):null
+                        }
                         
-
-                        <a href="#" class="header-links-item">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                            </svg>
-                        </a>
-                        <div uk-drop="mode: click;offset: 4" class="header_dropdown">
-                            <h4
-                                class="-mt-5 -mx-5 bg-gradient-to-t from-gray-100 to-gray-50 border-b font-bold px-6 py-3">
-                                Notification </h4>
-                            <ul class="dropdown_scrollbar" data-simplebar>
-                                <li>
-                                    <a href="#">
-                                        <div class="drop_avatar"> <img src="assets/images/avatars/avatar-1.jpg" alt=""/>
-                                        </div>
-                                        <div class="drop_content">
-                                            <p> <strong>Adrian Mohani</strong>  Lorem ipsum dolor cursus
-                                                <span class="text-link"> Adipiscing massa convallis  </span>
-                                            </p>
-                                            <span class="time-ago"> 2 hours ago </span>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <div class="drop_avatar"> <img src="assets/images/avatars/avatar-2.jpg" alt=""/>
-                                        </div>
-                                        <div class="drop_content">
-                                            <p>
-                                                <strong>Stella Johnson</strong> Nonummy nibh euismod
-                                                <span class="text-link"> Imperdiet doming </span>
-                                            </p>
-                                            <span class="time-ago"> 9 hours ago </span>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <div class="drop_avatar"> <img src="assets/images/avatars/avatar-3.jpg" alt=""/>
-                                        </div>
-                                        <div class="drop_content">
-                                            <p>
-                                                <strong>Alex Dolgove</strong>  Lorem ipsum dolor cursus
-                                                <span class="text-link"> Adipiscing massa convallis  </span>
-                                            </p>
-                                            <span class="time-ago"> 12 hours ago </span>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <div class="drop_avatar"> <img src="assets/images/avatars/avatar-1.jpg" alt=""/>
-                                        </div>
-                                        <div class="drop_content">
-                                            <p>
-                                                <strong>Stella Johnson</strong> Nonummy nibh euismod
-                                                <span class="text-link"> Imperdiet doming </span>
-                                            </p>
-                                            <span class="time-ago"> Yesterday </span>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <div class="drop_avatar"> <img src="assets/images/avatars/avatar-3.jpg" alt=""/>
-                                        </div>
-                                        <div class="drop_content">
-                                            <p>
-                                                <strong>Alex Dolgove</strong>  Lorem ipsum dolor cursus
-                                                <span class="text-link"> Adipiscing massa convallis  </span>
-                                            </p>
-                                            <span class="time-ago"> 12 hours ago </span>
-                                        </div>
-                                    </a>
-                                </li>
-                            </ul>
-                            <a href="#" class="see-all">See all</a>
-                        </div>
-
-
-                        <a href="#" class="header-links-item">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
-                            </svg>
-                        </a>
-                        <div uk-drop="mode: click;offset: 4" class="header_dropdown">
-                            <h4
-                                class="-mt-5 -mx-5 bg-gradient-to-t from-gray-100 to-gray-50 border-b font-bold px-6 py-3">
-                                Messages </h4>
-                            <ul class="dropdown_scrollbar" data-simplebar>
-                                <li>
-                                    <a href="#">
-                                        <div class="drop_avatar"> <img src="assets/images/avatars/avatar-1.jpg" alt=""/>
-                                        </div>
-                                        <div class="drop_content">
-                                            <strong> John menathon </strong> <time> 6:43 PM</time>
-                                            <p> Lorem ipsum dolor sit amet, consectetur </p>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <div class="drop_avatar"> <img src="assets/images/avatars/avatar-2.jpg" alt=""/>
-                                        </div>
-                                        <div class="drop_content">
-                                            <strong> Zara Ali </strong> <time>12:43 PM</time>
-                                            <p>  Sediam nonummy nibh euismod tincidunt laoreet dolore  </p>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <div class="drop_avatar"> <img src="assets/images/avatars/avatar-3.jpg" alt=""/>
-                                        </div>
-                                        <div class="drop_content">
-                                            <strong> Mohamed Ali </strong> <time> Wed </time>
-                                            <p> Lorem ipsum dolor sit amet, consectetur </p>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <div class="drop_avatar"> <img src="assets/images/avatars/avatar-1.jpg" alt=""/>
-                                        </div>
-                                        <div class="drop_content">
-                                            <strong> John menathon </strong> <time> Sun</time>
-                                            <p> Namliber tempor cumsoluta nobis eleifend option adipiscing </p>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <div class="drop_avatar"> <img src="assets/images/avatars/avatar-2.jpg" alt=""/>
-                                        </div>
-                                        <div class="drop_content">
-                                            <strong> Zara Ali </strong> <time> Fri</time>
-                                            <p> Lorem ipsum dolor sit amet, consectetur </p>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <div class="drop_avatar"> <img src="assets/images/avatars/avatar-3.jpg" alt=""/>
-                                        </div>
-                                        <div class="drop_content">
-                                            <strong> Mohamed Ali </strong> <time>1 Week ago</time>
-                                            <p>  Sediam nonummy nibh euismod tincidunt laoreet dolore  </p>
-                                        </div>
-                                    </a>
-                                </li>
-                            </ul>
-                            <a href="#" class="see-all">See all</a>
-                        </div>
-                        <a href="#">
-                            <img src="/images/avatars/avatar-0.jpg" class="header-avatar" alt=""/>
-                        </a>
-                        <div uk-drop="mode: click;offset:9" class="header_dropdown profile_dropdown border-t">
-                            <ul>
-                                <li><a href="#"> Account setting </a> </li>
-                                <li><a href="#"> Payments </a> </li>
-                                <li><a href="#"> Help </a> </li>
-                                <li><a href="form-login.html"> Log Out</a></li>
-                            </ul>
-                        </div>
-
                     </div>
                 </div>
             </header>

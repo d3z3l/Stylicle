@@ -8,10 +8,11 @@ import config from "../config";
 const Get_all = async (data) => {
   return new Promise((resolve, reject) => {
     var path="ts/allts"
-    var type='get'
+    var type='post'
     fetch(config.URL + path, {
       method: type,
       headers:{"Content-Type":"application/json","Authorization": cookie.load('Tokken')},
+      body:JSON.stringify(data)
     })
       .then((res) => res.json())
       .then(async (resjson) => {

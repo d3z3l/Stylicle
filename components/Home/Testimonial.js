@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 export default class Header extends React.Component {
   render() {
@@ -61,13 +62,15 @@ export default class Header extends React.Component {
             <div class="incredible_box">
               <div class="row">
                 <div class="col-md-6">
-                  <h1>Phasellus et cursus odio. Donec pretium ante sapien, </h1>
-                  <p>
-                    Nulla nec nunc quis velit fringilla commodo vitae sed mi.
+                  <h1>Do more, better </h1>
+                  <p class="text-large">
+                  Use Stylicle for all your booking, marketing, and payment needs.
                   </p>
-                  <a class="btn btn-info" href="#.">
-                    Lorem ipsum dolor{" "}
-                  </a>
+                  <Link href="/auth/signup" >
+                    <a class="btn btn-info" href="#.">
+                      Register Now{" "}
+                    </a>
+                  </Link>
                 </div>
                 <img
                  

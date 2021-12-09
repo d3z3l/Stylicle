@@ -9,6 +9,7 @@ import { faEye,faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import config from '../../../config'
 import Link from 'next/link'
+import Layout from "../../../components/Dashboard/Layout";
 
 const MUIDataTable = dynamic(() => import('mui-datatables-next'), {
   ssr: false
@@ -103,13 +104,13 @@ class ViewSeller extends React.Component {
   hendalStatus=(id)=>{
     switch (id) {
       case '0':
-        return 'Panding'
+        return 'Pending'
         break;
       case '1':
        return 'Completed'
         break;
       case '2':
-       return 'Cancled'
+       return 'Canceled'
         break;
     
       default:
@@ -126,20 +127,21 @@ class ViewSeller extends React.Component {
     // } else {
     //   data={seller:this.props.user_data._id}
     // }
-    // alert(this.state.servicestimeslote_id)
     await OrdersHelper.get_all(data).then((resp)=>{
       // console.log(resp);
       for (let i = 0; i < resp.data.data.orders.length; i++) {
         const element = resp.data.data.orders[i];
-        console.log(element);
+        if (element.details[0]==undefined) {
+          console.log(element);
+          
+        }
         orders.push([i+1,
-          element.details[0].customer.name
+          resp.data.data.role_id=='1'? element.details[0].customer.name:element.details[0].seller.name
           ,element.price
           ,this.hendalStatus(element.status)
           ,element.details.length
-          , <Link  href={{ pathname: '/marketpalce/Orders/order_view/'+ element._id}} >
+          , <Link  href={{pathname: '/marketpalce/Orders/order_view/'+ element._id, query: { candidateId: 8432 }}}  >
           <FontAwesomeIcon
-          // onClick={()=>alert(33)}
             style={{
               color: config.primaryColor,
               fontSize:'20px',
@@ -176,12 +178,15 @@ class ViewSeller extends React.Component {
   render() {
     return (
       <>
-        <Header />
+        <Layout >
         <div class="">
           <div class="container">
+            <h1 class="text-2xl leading-none text-gray-900 tracking-tight mt-5">
+              Orders
+            </h1>
             <div class="catg_listing">
               <div class="row">
-                <div class="col-md-12 pt-5">
+                <div class="col-md-12 ">
                   <div class="card p-3 uk-box-shadow-medium mt-5">
                   <div class="col-md-12">
                   <div class="mb-3">
@@ -190,6 +195,11 @@ class ViewSeller extends React.Component {
 
                   </div>
                     <div class="table-responsive">
+                    {
+                        this.state.servicestimeslotes.length==0?
+                        <h1 class="no_data_here" >There is no data to display</h1>
+                        :null
+                      }
                     <MuiThemeProvider theme={this.getMuiTheme()}>
                       <MUIDataTable title={"Order List"} data={this.state.servicestimeslotes} columns={columns} options={options} />
                     </MuiThemeProvider>
@@ -201,8 +211,8 @@ class ViewSeller extends React.Component {
             </div>
           </div>
         </div>
-Î
-        <Footer />
+
+        </Layout>
       </>
     );
   }

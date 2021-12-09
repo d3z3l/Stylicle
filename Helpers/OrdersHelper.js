@@ -88,10 +88,32 @@ const update = async (id,data) => {
       });
   });
 };
+const cancle = async (id,data) => {
+  return new Promise((resolve, reject) => {
+    var path="orders/cancel/"+id
+    var type='PATCH'
+    fetch(config.URL + path, {
+      method: type,
+      headers:{"Content-Type":"application/json","Authorization": cookie.load('Tokken')},
+      body:JSON.stringify(data)
+    })
+      .then((res) => res.json())
+      .then(async (resjson) => {
+        resolve({
+          status: true,
+          data: resjson
+        });
+      })
+      .catch((err) => {
+        console.log("failed", err);
+      });
+  });
+};
 
 export default {
   get,
   create,
   get_all,
-  update
+  update,
+  cancle
 };

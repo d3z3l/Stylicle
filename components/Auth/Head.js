@@ -31,11 +31,11 @@ export default class Header extends React.Component {
 
 
                 <div class="flex items-center lg:justify-between justify-around">
-
+                  <Link href="/">
                     <a href="index.html">
                         <img src="/images/Stylicle-Icon.svg" alt="" class="w-16"/>
                     </a>
-
+                  </Link>
                     <div class="capitalize flex font-semibold hidden lg:block my-2 space-x-3 text-center text-sm">
                     <Link href="/auth/login">
                         <a href="form-login.html" class="py-3 px-4">Login</a>

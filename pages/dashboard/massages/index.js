@@ -1,9 +1,214 @@
+// import "./messenger.css";
 import React from "react";
+import cookies from 'next-cookies';
 import Layout from "../../../components/Dashboard/Layout";
 
-export default class Login extends React.Component {
-  componentDidMount = () => {};
+import Conversation from "../../../components/conversations/Conversation";
+import Message from "../../../components/message/Message";
+import ChatOnline from "../../../components/chatOnline/ChatOnline";
+import axios from "axios";
+import { io } from "socket.io-client";
+import cookie from 'react-cookies'
+const jwt = require('jsonwebtoken');
+import config from "../../../config";
+import FollowersHelper from "../../../Helpers/FollowersHelper";
+import AuthHelper from "../../../Helpers/AuthHelper";
+import $ from 'jquery'
 
+
+export default class Messenger extends React.Component {
+
+  constructor(props) {
+    super(props)
+    this.state={
+      conversations:[],
+      currentChat:[],
+      messages:[],
+      newMessage:null,
+      arrivalMessage:null,
+      onlineuser:[],
+      unchateduser:[],
+      followers:[],
+      arrivalMessage:null,
+      user:this.props.user,
+      create_conversation:false,
+      selected_user:null,
+      user_index_to_remove:null,
+      recever_prof:{},
+      user_prof:{},
+    }
+    this.scrollRef = React.createRef();
+  }
+  componentDidMount =async () => {
+    await AuthHelper.Get().then((resp)=>{
+      this.setState({
+        user_prof:{
+          name:resp.data.data.user.name,
+          image:resp.data.data.user.image,
+        }
+      })
+    })
+    this.socket = io("ws://localhost:8900");
+    this.socket.on("getMessage", (data) => {      
+      this.arriveMassage(data)
+    });
+    this.getConversations(this.props.user._id)
+
+    this.socket.emit("addUser", this.props.user._id);
+    this.socket.on("getUsers", (users) => {
+        FollowersHelper.Get_by_id().then((resp)=>{
+          var data=resp.data.data.followers
+          var data2 = this.filter(data,users).then((data)=>{
+            console.log("filter test");
+            console.log(data);
+            this.setState({onlineuser:data})
+          })
+          var data3 = this.filter2(data,this.state.conversations).then((data)=>{
+            console.log("filter2 test");
+            console.log(data);
+            this.setState({unchateduser:data})
+          })
+        })
+    });
+  }
+  filter2 = async (data,users) => {
+
+    users=users.reverse()
+    return new Promise(resolve => {
+      try {
+        
+        var data2=  data.filter( (f) => {
+         let some= users.some((u) => {
+            let data4=u.members.find((m) => {
+              return m === f.follower._id ;
+            })
+            return data4 != undefined ;
+          })
+          return some==false;
+        })
+        // var data2=  data.filter( (f) => {
+        //   // console.log(22);
+        //   console.log("==================="+f.follower._id);
+        //   let some= false
+        //   users.forEach((u) => {
+        //   console.log("======="+u._id);
+        //     let data4=u.members.find((m) => { 
+
+        //       console.log(m);
+        //       // console.log(m);
+        //       // console.log(f.follower._id);
+        //       // console.log(m === f.follower._id);
+        //       if (m === f.follower._id) {
+        //         some=true
+        //       }
+        //       return m === f.follower._id
+        //     })
+        //   })
+        //   // console.log(some);
+        //   return some==false;
+        // })
+        resolve(data2);
+        } catch (e) {
+        console.log('Error')
+        }
+      
+    });
+  };
+  filter = async (data,users) => {
+    return new Promise(resolve => {
+      console.log(users);
+      console.log(data);
+      try {
+        var data2=  data.filter((f) => users.some((u) => u.userId === f.follower._id))
+        resolve(data2);
+        } catch (e) {
+        console.log('Error')
+        }
+      // setTimeout(() => {
+      // }, 2000);
+    });
+  };
+   getConversations = async (id) => {
+    try {
+      const res = await axios.get(config.URL +"conversations/" + id);
+      console.log("fsadfdsgdsf");
+      this.setState({conversations:res.data})
+      // setConversations(res.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  getMessages = async (data,user_Prof) => {
+    this.setState({recever_prof:user_Prof})
+
+
+    this.state.create_conversation=false
+    this.setState({currentChat:data})
+    try {
+      const res = await axios.get(config.URL + "messages/" + data._id);
+      this.setState({messages:res.data})
+      this.scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  handleSubmit = async (e) => {
+
+    if (this.state.create_conversation) {
+      try {
+        let data={
+            "senderId":this.state.user._id,
+            "receiverId":this.state.selected_user
+        }
+        const res = await axios.post(config.URL +"conversations/" , data);
+        this.setState({currentChat:res.data,conversations:[res.data,...this.state.conversations]})
+      } catch (err) {
+        console.log(err);
+      }
+      $("#unchat"+this.state.user_index_to_remove).remove()
+
+    }
+
+    // this.setState({unchateduser:this.state.unchateduser.splice(this.state.user_index_to_remove, 1)})
+    
+    e.preventDefault();
+    const message = {
+      sender: this.state.user._id,
+      text: this.state.newMessage,
+      conversationId:  this.state.currentChat._id,
+    };
+
+    const receiverId = this.state.currentChat.members.find(
+      (member) => member !== this.state.user._id
+    );
+
+    this.socket.emit("sendMessage", {
+      senderId: this.state.user._id,
+      receiverId,
+      text: this.state.newMessage,
+    });
+
+    try {
+      const res = await axios.post(config.URL + "messages/", message);
+      this.setState({messages:[...this.state.messages,res.data]})
+    } catch (err) {
+      console.log(err);
+    }
+    this.setState({newMessage:''})
+    this.scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+
+  };
+  arriveMassage=(data)=>{
+    this.setState({messages:[...this.state.messages,data]})
+    this.scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+
+  }
+  conversation_create=(id,i,data)=>{
+    this.setState({recever_prof:data,create_conversation:true,selected_user:id,user_index_to_remove:i,messages:[]})
+  }
+ 
   render() {
     return (
       <>
@@ -24,71 +229,28 @@ export default class Login extends React.Component {
 
                         <div class="pb-16 w-full">
                             <ul class="dark:text-gray-100">
-                                <li>
-                                    <a href="#" class="block flex items-center py-3 px-4 space-x-3 hover:bg-gray-100 dark:hover:bg-gray-700">
-                                        <div class="w-12 h-12 rounded-full relative flex-shrink-0">
-                                            <img src="/images/avatars/avatar-2.jpg" alt="" class="absolute h-full rounded-full w-full"/>
-                                            <span class="absolute bg-green-500 border-2 border-white bottom-0 h-3 m-0.5 right-0 rounded-full shadow-md w-3"></span>
-                                        </div>
-                                        <div class="flex-1 min-w-0 relative text-gray-500">
-                                            <h4 class="text-black font-semibold dark:text-white">David Peterson</h4>
-                                            <span class="absolute right-0 top-1 text-xs">Sun</span>
-                                            <p class="truncate">Esmod tincidunt ut laoreet</p>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#" class="block flex items-center py-3 px-4 space-x-3 bg-gray-100 dark:bg-gray-700">
-                                        <div class="w-12 h-12 rounded-full relative flex-shrink-0">
-                                            <img src="/images/avatars/avatar-1.jpg" alt="" class="absolute h-full rounded-full w-full"/>
-                                            <span class="absolute bg-green-500 border-2 border-white bottom-0 h-3 m-0.5 right-0 rounded-full shadow-md w-3"></span>
-                                        </div>
-                                        <div class="flex-1 min-w-0 relative text-gray-500">
-                                            <h4 class="text-black font-semibold dark:text-white">Sindy Forest</h4>
-                                            <span class="absolute right-0 top-1 text-xs"> Mon</span>
-                                            <p class="truncate">Seddiam nonummy nibh euismod laoreet</p>
-                                        </div>
-                                    </a>
-                                </li> 
-                                <li>
-                                    <a href="#" class="block flex items-center py-3 px-4 space-x-3 hover:bg-gray-100 dark:hover:bg-gray-700">
-                                        <div class="w-12 h-12 rounded-full relative flex-shrink-0">
-                                            <img src="/images/avatars/avatar-5.jpg" alt="" class="absolute h-full rounded-full w-full"/>
-                                            <span class="absolute bg-gray-300 border-2 border-white bottom-0 h-3 m-0.5 right-0 rounded-full shadow-md w-3"></span>
-                                        </div>
-                                        <div class="flex-1 min-w-0 relative text-gray-500">
-                                            <h4 class="text-black font-semibold dark:text-white"> Zara Ali </h4>
-                                            <span class="absolute right-0 top-1 text-xs">4 hours ago</span>
-                                            <p class="truncate">Consectetuer adiscing elit</p>
-                                        </div>
-                                    </a>
-                                </li> 
-                                <li>
-                                    <a href="#" class="block flex items-center py-3 px-4 space-x-3 hover:bg-gray-100 dark:hover:bg-gray-700">
-                                        <div class="w-12 h-12 rounded-full relative flex-shrink-0">
-                                            <img src="/images/avatars/avatar-4.jpg" alt="" class="absolute h-full rounded-full w-full"/>
-                                            <span class="absolute bg-green-500 border-2 border-white bottom-0 h-3 m-0.5 right-0 rounded-full shadow-md w-3"></span>
-                                        </div>
-                                        <div class="flex-1 min-w-0 relative text-gray-500">
-                                            <h4 class="text-black font-semibold dark:text-white">David Peterson</h4>
-                                            <span class="absolute right-0 top-1 text-xs">Week ago</span>
-                                            <p class="truncate">Nam liber tempor <i class="uil-grin-tongue-wink"></i></p>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#" class="block flex items-center py-3 px-4 space-x-3 hover:bg-gray-100 dark:hover:bg-gray-700">
-                                        <div class="w-12 h-12 rounded-full relative flex-shrink-0">
-                                            <img src="/images/avatars/avatar-2.jpg" alt="" class="absolute h-full rounded-full w-full"/>
-                                            <span class="absolute bg-green-500 border-2 border-white bottom-0 h-3 m-0.5 right-0 rounded-full shadow-md w-3"></span>
-                                        </div>
-                                        <div class="flex-1 min-w-0 relative text-gray-500">
-                                            <h4 class="text-black font-semibold dark:text-white">David Peterson</h4>
-                                            <span class="absolute right-0 top-1 text-xs">Week ago</span>
-                                            <p class="truncate">Esmod tincidunt ut laoreet</p>
-                                        </div>
-                                    </a>
-                                </li>
+                            {this.state.conversations.map((c) => (
+                                <div >
+                                    <Conversation
+                                    onPress={this.getMessages.bind(this)}
+                                     conversation={c} currentUser={this.state.user} />
+                                </div>
+                                ))}
+                              
+                            {this.state.user._id!=undefined && this.state.unchateduser.length!=0 ?(
+                                console.log('this.state.onlineUsers'),
+                                console.log(this.state.onlineuser),
+                                <ChatOnline
+                                onPress={this.conversation_create.bind(this)}
+                                unchateduser={this.state.unchateduser}
+                                onlineUsers={this.state.onlineuser}
+                                currentId={this.state.user._id}
+                                setCurrentChat={this.setCurrentChat}
+                                />):null
+
+                            }
+                              
+                               
                             </ul>
                         </div>
                     </div>
@@ -99,118 +261,53 @@ export default class Login extends React.Component {
                         
                             <a href="#" class="flex items-center space-x-3">
                                 <div class="w-10 h-10 rounded-full relative flex-shrink-0">
-                                    <img src="/images/avatars/avatar-1.jpg" alt="" class="h-full rounded-full w-full"/>
-                                    <span
-                                        class="absolute bg-green-500 border-2 border-white bottom-0 h-3 m-0.5 right-0 rounded-full shadow-md w-3"></span>
-                                </div>
+                                  {
+                                    this.state.recever_prof?.image?
+                                    <img 
+                                    src={
+                                      this.state.recever_prof?.image
+                                        ? config.image_url + this.state.recever_prof.image
+                                        : config.image_url + "person/noAvatar.png"
+                                    }
+                                     alt="" class="h-full rounded-full w-full"/>
+                                    :null
+                                  }
+                                  </div>
                                 <div class="flex-1 min-w-0 relative text-gray-500">
-                                    <h4 class="font-semibold text-black text-lg">Sindy Forest</h4>
+                                    <h4 class="font-semibold text-black text-lg">{this.state.recever_prof?.name}</h4>
                         
-                                    <p class="font-semibold leading-3 text-green-500 text-sm">is online</p>
                                 </div>
                             </a>                        
                         
-                            <a href="#" class="flex hover:text-red-400 items-center leading-8 space-x-2 text-red-500 font-medium"> 
-                                <i class="uil-trash-alt"></i> <span class="lg:block hidden"> Delete Conversation </span> 
-                            </a>
+                            
                         </div>
                          
-                        <div class="border-t dark:border-gray-600">
+                        <div class="border-t dark:border-gray-600 chatBoxTop"   >
 
-                            <div class="lg:p-8 p-4 space-y-5">
 
-                                <h3 class="lg:w-60 mx-auto text-sm uk-heading-line uk-text-center lg:pt-2"><span> 28 June, 2018 </span></h3>
-                                
-                                <div class="flex lg:items-center flex-row-reverse">
-                                    <div class="w-14 h-14 rounded-full relative flex-shrink-0">
-                                        <img src="/images/avatars/avatar-2.jpg" alt="" class="absolute h-full rounded-full w-full"/>
-                                    </div>
-                                    <div class="text-white py-2 px-3 rounded bg-blue-600 relative h-full lg:mr-5 mr-2 lg:ml-20">
-                                        <p class="leading-6">consectetuer adipiscing elit, sed diam nonummy nibh euismod laoreet dolore magna <i class="uil-grin-tongue-wink"></i> </p>
-                                        <div class="absolute w-3 h-3 top-3 -right-1 bg-blue-600 transform rotate-45"></div>
-                                    </div>
+{/* dsfdfsdg */}
+                           
+
+                            {this.state.messages.map((m) => (
+                                <div ref={this.scrollRef}>
+                                <Message user_prof={this.state.user_prof} recever_prof={this.state.recever_prof} message={m} own={m.sender === this.state.user._id} />
                                 </div>
+                            ))}
 
-                                <h3 class="lg:w-60 mx-auto text-sm uk-heading-line uk-text-center lg:pt-2"><span> 28 June, 2018 </span></h3>
-                               
-                                <div class="flex lg:items-center">
-                                    <div class="w-14 h-14 rounded-full relative flex-shrink-0">
-                                        <img src="/images/avatars/avatar-1.jpg" alt="" class="absolute h-full rounded-full w-full"/>
-                                    </div>
-                                    <div class="text-gray-700 py-2 px-3 rounded bg-gray-100 h-full relative lg:ml-5 ml-2 lg:mr-20 dark:bg-gray-700 dark:text-white">
-                                        <p class="leading-6">In ut odio libero vulputate <urna class="i uil-heart"></urna> <i class="uil-grin-tongue-wink"> </i> </p>
-                                        <div class="absolute w-3 h-3 top-3 -left-1 bg-gray-100 transform rotate-45 dark:bg-gray-700"></div>
-                                    </div>
-                                </div>
+{/* sdfdsfasdfasdf */}
 
-                                <div class="flex lg:items-center flex-row-reverse">
-                                    <div class="w-14 h-14 rounded-full relative flex-shrink-0">
-                                        <img src="/images/avatars/avatar-2.jpg" alt="" class="absolute h-full rounded-full w-full"/>
-                                    </div>
-                                    <div class="text-white py-2 px-3 rounded bg-blue-600 relative h-full lg:mr-5 mr-2 lg:ml-20">
-                                        <p class="leading-6">Nam liber tempor cum soluta nobis eleifend option <i class="uil-grin-tongue-wink-alt"></i></p>
-                                        <div class="absolute w-3 h-3 top-3 -right-1 bg-blue-600 transform rotate-45"></div>
-                                    </div>
-                                </div>
-                               
-                                <h3 class="lg:w-60 mx-auto text-sm uk-heading-line uk-text-center lg:pt-2"><span> 28 June, 2018 </span></h3>
-                                <div class="flex lg:items-center flex-row-reverse">
-                                    <div class="w-14 h-14 rounded-full relative flex-shrink-0">
-                                        <img src="/images/avatars/avatar-2.jpg" alt="" class="absolute h-full rounded-full w-full"/>
-                                    </div>
-                                    <div class="text-white py-2 px-3 rounded bg-blue-600 relative h-full lg:mr-5 mr-2 lg:ml-20">
-                                        <p class="leading-6">consectetuer adipiscing elit, sed diam nonummy nibh euismod laoreet dolore magna.</p>
-                                        <div class="absolute w-3 h-3 top-3 -right-1 bg-blue-600 transform rotate-45"></div>
-                                    </div>
-                                </div>
 
-                                <h3 class="lg:w-60 mx-auto text-sm uk-heading-line uk-text-center lg:pt-2"><span> 28 June, 2018 </span></h3>
-
-                                <div class="flex lg:items-center">
-                                    <div class="w-14 h-14 rounded-full relative flex-shrink-0">
-                                        <img src="/images/avatars/avatar-1.jpg" alt="" class="absolute h-full rounded-full w-full"/>
-                                    </div>
-                                    <div class="text-gray-700 py-2 px-3 rounded bg-gray-100 relative h-full lg:ml-5 ml-2 lg:mr-20 dark:bg-gray-700 dark:text-white">
-                                        <p class="leading-6">Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming </p>
-                                        <div class="absolute w-3 h-3 top-3 -left-1 bg-gray-100 transform rotate-45 dark:bg-gray-700"></div>
-                                    </div>
-                                </div>
-
-                                <div class="flex lg:items-center flex-row-reverse">
-                                    <div class="w-14 h-14 rounded-full relative flex-shrink-0">
-                                        <img src="/images/avatars/avatar-2.jpg" alt="" class="absolute h-full rounded-full w-full"/>
-                                    </div>
-                                    <div class="text-white py-2 px-3 rounded bg-blue-600 relative h-full lg:mr-5 mr-2 lg:ml-20">
-                                        <p class="leading-6">quis nostrud exerci tation ullamcorper suscipit .</p>
-                                        <div class="absolute w-3 h-3 top-3 -right-1 bg-blue-600 transform rotate-45"></div>
-                                    </div>
-                                </div>
-
-                                <div class="flex lg:items-center">
-                                    <div class="w-14 h-14 rounded-full relative flex-shrink-0">
-                                        <img src="/images/avatars/avatar-1.jpg" alt="" class="absolute h-full rounded-full w-full"/>
-                                    </div>
-                                    <div class="text-gray-700 py-2 px-3 rounded bg-gray-100 relative h-full lg:ml-5 ml-2 lg:mr-20 dark:bg-gray-700 dark:text-white">
-
-                                        <div class="flex space-x-0.5 my-2 animate-pulse">  
-                                            <div class="w-2 h-2 rounded-full bg-gray-400"></div>
-                                            <div class="w-2 h-2 rounded-full bg-gray-300"></div>
-                                            <div class="w-2 h-2 rounded-full bg-gray-300"></div>
-                                        </div>
-                                        <div class="absolute w-3 h-3 top-3 -left-1 bg-gray-100 transform rotate-45 dark:bg-gray-700"></div>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                            <div class="border-t flex p-6 dark:border-gray-700">
-                                <textarea cols="1" rows="1" placeholder="Your Message.." class="border-0 flex-1 h-10 min-h-0 resize-none min-w-0 shadow-none dark:bg-transparent"></textarea>
-                                <div class="flex h-full space-x-2">
-                                    <button type="submit" class="bg-blue-600 font-semibold px-6 py-2 rounded-md text-white">Send</button>
-                                </div>
-                            </div>
 
                         </div>
+                            <div class="border-t flex p-6 dark:border-gray-700">
+                                <textarea cols="1" rows="1" placeholder="Your Message.." class="border-0 flex-1  min-h-0 resize-none min-w-0 shadow-none dark:bg-transparent"
+                                 onChange={(e) => this.setState({newMessage:e.target.value})}
+                                 value={this.state.newMessage}
+                                ></textarea>
+                                <div class="flex h-full space-x-2">
+                                    <button onClick={this.handleSubmit} type="submit" class="bg-blue-600 font-semibold px-6 py-2 rounded-md text-white">Send</button>
+                                </div>
+                            </div>
                     
                     </div>
                 </div>
@@ -221,3 +318,25 @@ export default class Login extends React.Component {
     );
   }
 }
+
+export async function getServerSideProps(context) {
+    const c = cookies(context);
+    const myAuthenticationCookie = c.Tokken;
+    
+    try {
+      const Authenticated = jwt.verify(myAuthenticationCookie,process.env.APP_SECRET_KEY);
+      return {
+        props: {
+          user:Authenticated
+        },
+      };
+    } catch (error) {
+      const { res } = context;
+      res.setHeader("location", "/auth/login");
+      res.statusCode = 302;
+      res.end();
+      return;
+    }
+    
+  }
+  

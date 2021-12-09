@@ -1,5 +1,7 @@
 import React from "react";
 import Link from "next/link";
+import Router from "next/router";
+
 import config from "../../../../config";
 import { connect } from "react-redux";
 import GoogleMapReact from "google-map-react";
@@ -64,6 +66,8 @@ class Profile extends React.Component {
     };
     console.log(TS);
     TS.Upload(data).then((resp) => {
+      Router.push('/dashboard/TS')
+
       console.log(resp.data);
     });
   };
@@ -106,15 +110,15 @@ class Profile extends React.Component {
             <div class="grid grid-cols-2 gap-3 lg:p-6 p-4">
               
               
-              <div class="col-span-2">
-                <label for="">Title</label>
-                <input
+            <div class="col-span-2">
+                <label for="">Discription</label>
+                <textarea
                   type="text"
                   onChange={(text) => [
                     this.setState({ phone: text.target.value }),
                   ]}
                   // value={this.state.phone}
-                  placeholder="Your name.."
+                  placeholder="Discription.."
                   class="shadow-none bg-gray-100"
                 />
               </div>

@@ -7,7 +7,13 @@ import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 // import Profile from "../../../components/Dashboard/Settings/Profile";
 import dynamic from "next/dynamic";
 
+const SellerProfile = dynamic(() => import('../../../components/Dashboard/Settings/SellerProfile'), {
+  ssr: false
+});
 const Profile = dynamic(() => import('../../../components/Dashboard/Settings/Profile'), {
+  ssr: false
+});
+const ResetPassword = dynamic(() => import('../../../components/Dashboard/Settings/ResetPassword'), {
   ssr: false
 });
 const Workinghours = dynamic(() => import('../../../components/Dashboard/Settings/workinghours'), {
@@ -28,6 +34,9 @@ const AssignServices = dynamic(() => import('../../../components/Dashboard/Setti
 const ServicesTimeSlots = dynamic(() => import('../../../components/Dashboard/Settings/ServicesTimeSlots'), {
   ssr: false
 })
+const Employees = dynamic(() => import('../../../components/Dashboard/Settings/Employees'), {
+  ssr: false
+})
 class Settings extends React.Component {
   constructor(props) {
     super(props);
@@ -41,7 +50,6 @@ class Settings extends React.Component {
 
 
   tabhendal = async (index) => {
-    // alert(index)
     this.setState({index})
     await $(".Profile_Settings_tab").removeClass("uk-active");
     $("#tab_" + index).addClass("uk-active");
@@ -59,11 +67,21 @@ class Settings extends React.Component {
             <Tabs   selectedIndex={this.state.index}  onSelect={(index) => this.tabhendal(index)}>
               <TabList>
                 <ul class="mt-5 -mr-3 flex-nowrap lg:overflow-hidden overflow-x-scroll uk-tab">
-                 <Tab disabled={false} >
+                  <Tab disabled={false} >
                     <li id={'tab_0'} class=" uk-active tab_0 Profile_Settings_tab">
                       <a href="#">General</a>
                     </li>
                   </Tab>
+                  {
+                    this.props.user_data.role_id=='0'?(
+                      <Tab disabled={false} >
+                        <li id={'tab_1'} class=" Profile_Settings_tab">
+                          <a href="#">Reset Password</a>
+                        </li>
+                      </Tab>
+                    ):null
+                  }
+                  
                   {
                     this.props.user_data.role_id=='1'?(
                       <>
@@ -82,12 +100,20 @@ class Settings extends React.Component {
                           <a href="#">Services Time Slots</a>
                         </li>
                       </Tab>
-
+                      <Tab>
+                        <li id={'tab_4'} class=" Profile_Settings_tab  ">
+                          <a href="#">Employees</a>
+                        </li>
+                      </Tab>
+                      <Tab  >
+                        <li id={'tab_5'} class=" Profile_Settings_tab">
+                          <a href="#">Reset Password</a>
+                        </li>
+                      </Tab>
                       </>
                     ):null
                   }
                   {
-                    console.log(this.props.user_data.role_id),
                     this.props.user_data.role_id=='2'?(
                       <>
                       <Tab>
@@ -105,18 +131,36 @@ class Settings extends React.Component {
                           <a href="#">Services</a>
                         </li>
                       </Tab>
+                      <Tab  >
+                        <li id={'tab_4'} class=" Profile_Settings_tab">
+                          <a href="#">Reset Password</a>
+                        </li>
+                      </Tab>
                       </>
                     ):null
                   }
-                 
-                 
-                 
                 </ul>
               </TabList>
               
-              <TabPanel>
-                <Profile />
-              </TabPanel>
+              {
+                this.props.user_data.role_id=='1'?(
+                  <TabPanel>
+                    <SellerProfile />
+                  </TabPanel>
+                ):(
+                  <TabPanel>
+                    <Profile />
+                  </TabPanel>
+                )
+              }
+              {
+                this.props.user_data.role_id=='0'?(
+                  <TabPanel>
+                    <ResetPassword />
+                  </TabPanel>
+                ):null
+              }
+              
               {
                 this.props.user_data.role_id=='1'?(
                   <>
@@ -128,6 +172,12 @@ class Settings extends React.Component {
                   </TabPanel>
                   <TabPanel>
                     <ServicesTimeSlots/>
+                  </TabPanel>
+                  <TabPanel>
+                    <Employees/>
+                  </TabPanel>
+                  <TabPanel>
+                    <ResetPassword />
                   </TabPanel>
                   </>
                 ):null
@@ -144,12 +194,12 @@ class Settings extends React.Component {
                   <TabPanel>
                     <Services/>
                   </TabPanel>
+                  <TabPanel>
+                    <ResetPassword />
+                  </TabPanel>
                   </>
                 ):null
               }
-              
-              
-              
             </Tabs>
           </div>
         </Layout>

@@ -8,7 +8,7 @@ import AppLinks from "../components/Home/AppLinks";
 import Testimonial from "../components/Home/Testimonial";
 import Inspired from "../components/Home/Inspired";
 import Footer from "../components/Home/Footer";
-
+ 
 export default class Home extends React.Component {
   componentDidMount = () => {
     if (typeof window === "undefined") {
@@ -28,8 +28,6 @@ export default class Home extends React.Component {
         <Testimonial/>
         <Inspired/>
         <Footer/>
-        
-        
       </>
     );
   }

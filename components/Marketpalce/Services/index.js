@@ -30,8 +30,8 @@ class WorkingHours extends React.Component {
         <div class="mobileservice">
           <div class="row">
             <div class="col-md-6">
-              <h2>{this.props.title}</h2>
-              {/* <p>‼️ Please Read‼️ Effective 1/1/2021 This is a fla...</p> */}
+              <h2 class='m-0' >{this.props.title}</h2>
+              <p class='m-0' >{this.props.disc}</p>
             </div>
             <div class="col-md-6">
               <div class="bookbtnrow">
@@ -48,7 +48,7 @@ class WorkingHours extends React.Component {
                         onClick={this.hendalFunction}
                         class="btn btn-info"
                       >
-                         View
+                         Book
                   </button>
                     ):
                     (
@@ -57,7 +57,7 @@ class WorkingHours extends React.Component {
                     class="btn btn-info"
                     data-toggle="modal"
                     data-target="#exampleModalCenter"
-                  > View
+                  > Book
                   </button>
                     )
                   }

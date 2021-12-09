@@ -19,7 +19,7 @@ export default class Banner extends React.Component {
           <h1>Top Categories</h1>
           <div class="row">
             <OwlCarousel
-            items={5}
+            items={6}
             // loop={true}
             // autoplay={true}
             dots={false}

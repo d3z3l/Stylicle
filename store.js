@@ -13,9 +13,16 @@ const initialState = {
   user_id:'',
 
   category_filter:'',
+  search_location:'',
   pagenate_count:1,
   sellers_list:[], 
 
+
+  service_filter:'',
+  service_filter_location_name:'',
+  service_filter_item:'',
+
+  
   user_workinghours:[
     { starting_time: 0, end_time: 0, off: 0, day: "1" },
     { starting_time: 0, end_time: 0, off: 0, day: "2" },
@@ -97,6 +104,26 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         category_filter: action.payload,
+      };
+    case 'service_filter':
+      return {
+        ...state,
+        service_filter: action.payload,
+      };
+    case 'search_location':
+      return {
+        ...state,
+        search_location: action.payload,
+      };
+    case 'service_filter_location_name':
+      return {
+        ...state,
+        service_filter_location_name: action.payload,
+      };
+    case 'service_filter_item':
+      return {
+        ...state,
+        service_filter_item: action.payload,
       };
     default:
       return state;

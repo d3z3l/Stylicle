@@ -13,9 +13,9 @@ export default class Login extends React.Component {
     return (
       <>
       <div id="wrapper" class="flex flex-col justify-between h-screen">
-        <Header/>
+        {/* <Header/> */}
         <Form/>
-        <Footer/>
+        {/* <Footer/> */}
       </div>
         
         

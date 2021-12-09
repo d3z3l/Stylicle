@@ -1,4 +1,3 @@
-import "../styles/globals.css";
 import "../public/css/bootstrap.min.css";
 import "../public/css/component.css";
 import "../public/css/icons.css";
@@ -7,17 +6,26 @@ import "../public/css/uikit.css";
 import "../public/css/customstyle.css";
 import "../public/css/tailwind-dark.css";
 import "../public/css/innerstyle.css";
-import "../public/css/style.css";
+
+
+import "../public/css/messenger.css";
+import "../public/css/chatOnline.css";
+import "../public/css/conversation.css";
+import "../public/css/message.css";
+// import "../public/css/style.css";
+import "../public/css/style_rebuild.css";
 import "react-datetime/css/react-datetime.css";
 import "next-pagination/dist/index.css";
-import $ from 'jquery'
+import "../styles/globals.css";
+
+import $ from 'jquery';
 import Head from "next/head";
 import { Provider } from "react-redux";
 import { useStore } from "../store";
 import Router from 'next/router'
 import React, { useState, useEffect } from 'react';
 import AuthHelper from "../Helpers/AuthHelper";
-import "@fortawesome/fontawesome-svg-core/styles.css"; // import Font Awesome CSS
+import "@fortawesome/fontawesome-svg-core/styles.css";
 import { config } from "@fortawesome/fontawesome-svg-core";
 config.autoAddCss
 function MyApp({ Component, pageProps }) {
