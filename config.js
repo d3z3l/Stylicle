@@ -9,7 +9,7 @@ const $borderRadius = 10;
 export default {
     // URL:"https://api.stylicle.com/api/api/v1/",
     // image_url:"https://api.stylicle.com/api/img/users/",
-    URL: "http://127.0.0.1:8080/api/v1/",
+    URL: "https://stylicle-api.vercel.app/",
     image_url: "http://127.0.0.1:8080/img/users/",
     // URL:"http://ec2-3-14-67-56.us-east-2.compute.amazonaws.com/api/api/v1/",
     // image_url:"http://ec2-3-14-67-56.us-east-2.compute.amazonaws.com/img/users/",
