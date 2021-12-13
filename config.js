@@ -9,8 +9,8 @@ const $borderRadius = 10;
 export default {
     // URL:"https://api.stylicle.com/api/api/v1/",
     // image_url:"https://api.stylicle.com/api/img/users/",
-    URL: "http://api.stylicle.com:8080/api/api/v1/",
-    image_url: "http://api.stylicle.com:8080/img/users/",
+    URL: "https://api.stylicle.com/api/v1/",
+    image_url: "https://api.stylicle.com/img/users/",
     // URL:"http://ec2-3-14-67-56.us-east-2.compute.amazonaws.com/api/api/v1/",
     // image_url:"http://ec2-3-14-67-56.us-east-2.compute.amazonaws.com/img/users/",
     Tokken: "u4cvgaruuz8ijhzblutrg56dvl1rv0mh",
