@@ -2,7 +2,7 @@ import React from "react";
 import dynamic from "next/dynamic";
 import ServicesHelper from "../../Helpers/ServicesHelper";
 import config from "../../config";
-import Link from 'next/link'
+import Link from "next/link";
 
 const OwlCarousel = dynamic(
   () => {
@@ -14,30 +14,28 @@ import "owl.carousel/dist/assets/owl.carousel.css";
 import "owl.carousel/dist/assets/owl.theme.default.css";
 
 export default class Banner extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
-      services:[],
+      services: [],
     };
   }
-  componentDidMount= ()=>{
-    this.hendalGetServices()
-  }
+  componentDidMount = () => {
+    this.hendalGetServices();
+  };
   hendalGetServices = () => {
-    let services=[]
+    let services = [];
     ServicesHelper.Popular_Services().then((resp) => {
-    //   for (let i = 0; i < resp.data.data.services.length; i++) {
-    //     const element = resp.data.data.services[i];
-    //     services.push(
-    //       <li>
-    //         <a href="#">{element.title}</a>
-    //       </li>
-    //     )
-    // }
-    this.setState({services:resp.data.data.services})
-    console.log(this.state.services.length);
-    
+      //   for (let i = 0; i < resp.data.data.services.length; i++) {
+      //     const element = resp.data.data.services[i];
+      //     services.push(
+      //       <li>
+      //         <a href="#">{element.title}</a>
+      //       </li>
+      //     )
+      // }
+      this.setState({ services: resp.data.data.services });
+      console.log(this.state.services.length);
     });
   };
 
@@ -49,41 +47,37 @@ export default class Banner extends React.Component {
             <div class="guides_heading mb-4">
               <h1>Popular Services</h1>
             </div>
-            {
-              this.state.services.length!=0?(
-                <OwlCarousel
+            {this.state.services.length != 0 ? (
+              <OwlCarousel
                 className="owl-theme "
                 items={5}
                 loop={true}
                 dots={false}
                 margin={10}
               >
-                {
-                  this.state.services.map((val,index)=>(
-                    <>
+                {this.state.services.map((val, index) => (
+                  <>
                     {console.log(val)}
                     <div class="item">
-                    <Link href="/marketpalce/MarketplaceCategories">
-                      <div class="card overflow-hidden">
-                        <div class="position-relative">
-                          <a href="#">
-                            <img src={config.image_url + val.image} alt="" />
-                          </a>
-                          <div class="line1"></div>
-                          <div class="line2"></div>
-                          <div class="line3"></div>
-                          <div class="line4"></div>
+                      <Link href="/marketpalce/MarketplaceCategories">
+                        <div class="card overflow-hidden">
+                          <div class="position-relative">
+                            <a href="#">
+                              <img src={config.image_url + val.image} alt="" />
+                            </a>
+                            <div class="line1"></div>
+                            <div class="line2"></div>
+                            <div class="line3"></div>
+                            <div class="line4"></div>
+                          </div>
+                          <div class="text-box">
+                            <h4>{val.title}</h4>
+                          </div>
                         </div>
-                        <div class="text-box">
-                          <h4>{val.title}</h4>
-                        </div>
-                      </div>
                       </Link>
                     </div>
-                    </>
-                  ))
-                }
-
+                  </>
+                ))}
 
                 {/* <div class="item">
                   <div class="card overflow-hidden">
@@ -168,10 +162,8 @@ export default class Banner extends React.Component {
                     </div>
                   </div>
                 </div> */}
-    
               </OwlCarousel>
-              ):null
-            }
+            ) : null}
           </div>
         </section>
       </>

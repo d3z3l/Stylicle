@@ -142,23 +142,22 @@ class ViewSeller extends React.Component {
       <>
         <Header />
         <div class="pt-4">
-                        {this.props.user_workinghours.map((item, key) => (
-                         0                        ))}
-                        <p class="pb-2">
-                          Sunday{" "}
-                          <span class="float-right">
-                            <strong>Closed</strong>
-                          </span>
-                        </p>
-                        <p class="pb-2">
-                          Saturday{" "}
-                          <span class="float-right">
-                            <strong>09:00 AM - 05:00 PM</strong>
-                          </span>
-                        </p>
-                      </div>
+          {this.props.user_workinghours.map((item, key) => 0)}
+          <p class="pb-2">
+            Sunday{" "}
+            <span class="float-right">
+              <strong>Closed</strong>
+            </span>
+          </p>
+          <p class="pb-2">
+            Saturday{" "}
+            <span class="float-right">
+              <strong>09:00 AM - 05:00 PM</strong>
+            </span>
+          </p>
+        </div>
 
-               <Footer />
+        <Footer />
       </>
     );
   }

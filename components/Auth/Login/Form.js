@@ -1,10 +1,10 @@
 import React from "react";
 import Link from "next/link";
 import { connect } from "react-redux";
-import Router from 'next/router'
+import Router from "next/router";
 import AuthHelper from "../../../Helpers/AuthHelper";
-import cookie from 'react-cookies'
-import KeyHandler, { KEYPRESS } from 'react-key-handler';
+import cookie from "react-cookies";
+import KeyHandler, { KEYPRESS } from "react-key-handler";
 
 class CounterDisplay extends React.Component {
   constructor(props) {
@@ -16,13 +16,13 @@ class CounterDisplay extends React.Component {
       secureEntry: true,
     };
   }
-  componentDidMount=()=>{
-    AuthHelper.Varification().then((data)=>{
-        if (data.status!='unauthorize') {
-          Router.push('/dashboard/feed')
-        } 
-      })
-  }
+  componentDidMount = () => {
+    AuthHelper.Varification().then((data) => {
+      if (data.status != "unauthorize") {
+        Router.push("/dashboard/feed");
+      }
+    });
+  };
   count = () => {
     // setTimeout(() => {
     this.props._count(22);
@@ -36,14 +36,13 @@ class CounterDisplay extends React.Component {
     AuthHelper.Login(data).then((resp) => {
       if (resp.data.status != "success") {
         this.setState({ messages: resp.data.status });
-      }else if (resp.data.nav =='packages') {
-        cookie.save('Tokken_temp', resp.data.data.tokken , { path: '/' })
-        Router.push('/packages_seller')
+      } else if (resp.data.nav == "packages") {
+        cookie.save("Tokken_temp", resp.data.data.tokken, { path: "/" });
+        Router.push("/packages_seller");
       } else {
-        console.log(cookie.load('Tokken'));
-        cookie.save('Tokken', resp.data.data.tokken , { path: '/' })
-        Router.push('/dashboard/feed')
-
+        console.log(cookie.load("Tokken"));
+        cookie.save("Tokken", resp.data.data.tokken, { path: "/" });
+        Router.push("/dashboard/feed");
       }
     });
   };
@@ -54,27 +53,25 @@ class CounterDisplay extends React.Component {
         <KeyHandler
           keyEventName={KEYPRESS}
           keyValue="Enter"
-          onKeyHandle={()=>this.handleLogin()}
+          onKeyHandle={() => this.handleLogin()}
         />
-        <div class="col-lg-6">
-          
-        </div>
+        <div class="col-lg-6"></div>
         <div class="authimg">
-            <img
-              src="/images/login-img.png"
-              alt=""
-              class="img-fluid aun dexlog"
-            />
-          </div>
+          <img
+            src="/images/login-img.png"
+            alt=""
+            class="img-fluid aun dexlog"
+          />
+        </div>
         <div class="col-sm-6 ml-auto">
-        <div class="outhlogo">
-            <Link href="/" >
+          <div class="outhlogo">
+            <a href="/">
               <img
                 src="/images/logo2.png"
                 alt=""
                 class="img-fluid aun dexlog"
               />
-              </Link>
+            </a>
           </div>
           <div class="outhform">
             <h1
@@ -92,9 +89,9 @@ class CounterDisplay extends React.Component {
             <input
               type="text"
               onChange={(text) => [this.setState({ email: text.target.value })]}
-              onKeyPress={event => {
-                if (event.key === 'Enter') {
-                  this.handleLogin()
+              onKeyPress={(event) => {
+                if (event.key === "Enter") {
+                  this.handleLogin();
                 }
               }}
               placeholder="example@mydomain.com"
@@ -106,9 +103,9 @@ class CounterDisplay extends React.Component {
               onChange={(text) => [
                 this.setState({ password: text.target.value }),
               ]}
-              onKeyPress={event => {
-                if (event.key === 'Enter') {
-                  this.handleLogin()
+              onKeyPress={(event) => {
+                if (event.key === "Enter") {
+                  this.handleLogin();
                 }
               }}
               placeholder="***********"
@@ -117,7 +114,11 @@ class CounterDisplay extends React.Component {
             />
             <div class="flex justify-between my-4">
               <div class="checkbox">
-                <input onClick={() => console.log(44)} type="checkbox" id="chekcbox1" />
+                <input
+                  onClick={() => console.log(44)}
+                  type="checkbox"
+                  id="chekcbox1"
+                />
                 <label for="chekcbox1">
                   <span class="checkbox-icon"></span>Remember Me
                 </label>
@@ -148,7 +149,6 @@ class CounterDisplay extends React.Component {
             {/* </form> */}
           </div>
         </div>
-        
       </div>
     );
   }

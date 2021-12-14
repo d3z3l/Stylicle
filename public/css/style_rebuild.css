@@ -1063,9 +1063,9 @@ b,
 strong {
     font-weight: 700 !important;
 }
-.container{
+/* .container{
     width: inherit !important;
-}
+} */
 .ctgsldimg{
     /* height: 250px; */
     overflow:hidden
@@ -1087,7 +1087,7 @@ strong {
 }
 @media (min-width: 1024px) {
     .container {
-        max-width: 950px !important;
+        max-width: 1750px !important;
         padding-top: 45px;
     
     }
@@ -1616,6 +1616,8 @@ header .uk-dropdown {
 .sidebar .sidebar_inner {
     height: calc(100vh - 60px);
     padding: 5px 13px;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 .sidebar .sidebar_inner ul {
     list-style: none;

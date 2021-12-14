@@ -3,83 +3,83 @@ import $ from "jquery";
 import { connect } from "react-redux";
 import AuthHelper from "../../Helpers/AuthHelper";
 import ServicesHelper from "../../Helpers/ServicesHelper";
-import Link from 'next/link'
+import Link from "next/link";
 import CategoriesHelper from "../../Helpers/CategoriesHelper";
 class Header extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-        toggle: false,
-        categories:[],
-        selecter_category:'',
-        login_status:'unauthorize',
-        result:[],
-        admin:0
+      toggle: false,
+      categories: [],
+      selecter_category: "",
+      login_status: "unauthorize",
+      result: [],
+      admin: 0,
     };
-}
-  
-  componentDidMount = () => {
-    this.loginvarify()
-    $('.overlay').hide()
+  }
 
-    console.log("this.props.category_filter")
-    console.log(this.props.category_filter)
-    this.getUserHendal()
-    this.hendalGetCaterory()
-    this.hendalgetAllsellers()
+  componentDidMount = () => {
+    this.loginvarify();
+    $(".overlay").hide();
+
+    console.log("this.props.category_filter");
+    console.log(this.props.category_filter);
+    this.getUserHendal();
+    this.hendalGetCaterory();
+    this.hendalgetAllsellers();
     window.addEventListener("scroll", this.handleScroll);
   };
 
-  loginvarify=()=>{
+  loginvarify = () => {
     // alert(33)
-    AuthHelper.Varification().then((data)=>{
+    AuthHelper.Varification().then((data) => {
       // console.log(data.status);
       // if (data.status=='unauthorize') {
-       this.setState({login_status:data.status})
+      this.setState({ login_status: data.status });
       // }else{
       //   return (<p>ooooo</p>);
       // }
-    })
-  }
-  getUserHendal= async ()=>{
-    await AuthHelper.Get().then((resp)=>{
-     this.props._user_fname(resp.data.data.user.name)
-     this.props._user_lname(resp.data.data.user.name)
-     this.props._user_phone(resp.data.data.user.phone)
-     this.props._user_image(resp.data.data.user.image)
-     this.props._user_workinghours(resp.data.data.user.workinghours)
-     this.props._user_data(resp.data.data.user);
-     if (resp.data.data.user.role_id=='2') {
-       this.setState({admin:1})
-     }
+    });
+  };
+  getUserHendal = async () => {
+    await AuthHelper.Get().then((resp) => {
+      this.props._user_fname(resp.data.data.user.name);
+      this.props._user_lname(resp.data.data.user.name);
+      this.props._user_phone(resp.data.data.user.phone);
+      this.props._user_image(resp.data.data.user.image);
+      this.props._user_workinghours(resp.data.data.user.workinghours);
+      this.props._user_data(resp.data.data.user);
+      if (resp.data.data.user.role_id == "2") {
+        this.setState({ admin: 1 });
+      }
 
-       // this.setState({
-       //   user_name:resp.data.data.user.name,
-       //   user_image:resp.data.data.user.image,
-       // })
-     });    
-   }
-  hendalgetAllsellers = (cat='') => {
-    var _type=''
+      // this.setState({
+      //   user_name:resp.data.data.user.name,
+      //   user_image:resp.data.data.user.image,
+      // })
+    });
+  };
+  hendalgetAllsellers = (cat = "") => {
+    var _type = "";
     // if (this.props.service_filter!='') {
     //   type='service'
     //   cat=this.props.service_filter
     // }
-    AuthHelper.getAllsellers(cat,0,_type).then((resp)=>{
-      if (cat!='') {
-        this.props._category_filter(cat)
+    AuthHelper.getAllsellers(cat, 0, _type).then((resp) => {
+      if (cat != "") {
+        this.props._category_filter(cat);
       }
       // this.setState({Sellers:resp.data.data.user})
-      this.props._pagenate_count(resp.data.data.user_count)
-      this.props._sellers_list(resp.data.data.user)
+      this.props._pagenate_count(resp.data.data.user_count);
+      this.props._sellers_list(resp.data.data.user);
       // console.log(resp.data.data.user);
-    })
+    });
   };
   hendalGetCaterory = () => {
-    let categories=''
+    let categories = "";
     CategoriesHelper.Get().then((resp) => {
       // for (let i = 0; i < resp.data.data.categories.length; i++) {
-        this.setState({categories:resp.data.data.categories})
+      this.setState({ categories: resp.data.data.categories });
       // }
     });
   };
@@ -95,63 +95,63 @@ class Header extends React.Component {
   };
   toggle = () => {
     if (this.state.toggle) {
-      $('.dl-menuwrapper .dl-menu').css("opacity" ,'0')
-      $('.overlay').hide()
+      $(".dl-menuwrapper .dl-menu").css("opacity", "0");
+      $(".overlay").hide();
     } else {
-      $('.dl-menuwrapper .dl-menu').css({"opacity" :'1', "pointer-events": 'auto'})
+      $(".dl-menuwrapper .dl-menu").css({
+        opacity: "1",
+        "pointer-events": "auto",
+      });
 
-      $('.overlay').show()
+      $(".overlay").show();
     }
-   this.setState({toggle:!this.state.toggle})
+    this.setState({ toggle: !this.state.toggle });
   };
-  test = () => {
-
-  };
-  search=(val)=>{
-    if (val.length>2) {
-      ServicesHelper.Get_search(val).then((resp)=>{
-        this.setState({result:resp.data.data.services})
-      })
-    } else if (val.length == 0 ) {
-      this.setState({result:[]})
+  test = () => {};
+  search = (val) => {
+    if (val.length > 2) {
+      ServicesHelper.Get_search(val).then((resp) => {
+        this.setState({ result: resp.data.data.services });
+      });
+    } else if (val.length == 0) {
+      this.setState({ result: [] });
     }
     // alert(val.length)
-  }
+  };
 
   render() {
     return (
       <>
         <link
           rel="stylesheet"
-          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" 
-          />
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+        />
         <script src="/js/jquery.min.js"></script>
         <script src="/js/bootstrap.js"></script>
-        <header class="header_home" >
-          <div class="overlay" onClick={this.toggle}  />
+        <header class="header_home">
+          <div class="overlay" onClick={this.toggle} />
 
           <div class="header-top" id="header">
-            <div class="container"> 
+            <div class="container">
               <div class="row">
                 <div class="col-12 p-0">
                   <div class="navigation">
                     <nav class="navbar navbar-expand-lg navbar-light">
-                      <a class="navbar-brand" >
-                      <Link href="/" >
-                        <img
-                          src="/images/logo2.png"
-                          alt=""
-                          class="img-fluid aun dexlog"
-                        />
+                      <a class="navbar-brand">
+                        <Link href="/">
+                          <img
+                            src="/images/logo2.png"
+                            alt=""
+                            class="img-fluid aun dexlog"
+                          />
                         </Link>
-                        <Link href="/" >
-                        <img
-                          src="images/Stylicle-Icon.svg"
-                          alt=""
-                          class="img-fluid moblog"
-                        />
+                        <Link href="/">
+                          <img
+                            src="images/Stylicle-Icon.svg"
+                            alt=""
+                            class="img-fluid moblog"
+                          />
                         </Link>
-                        
                       </a>
                       <div class="header-form mr-auto">
                         <form>
@@ -172,17 +172,15 @@ class Header extends React.Component {
                             type="search"
                             class="form-control"
                             placeholder="Find Services"
-                            onChange={(e)=>this.search(e.target.value)}
+                            onChange={(e) => this.search(e.target.value)}
                           />
                           <button class="btn-default">Search</button>
                         </form>
-                        <div style={{width:'50%'}} class="bg-white search-r">
-                        {
-                          this.state.result.map((val,index)=>(
+                        <div style={{ width: "50%" }} class="bg-white search-r">
+                          {this.state.result.map((val, index) => (
                             <li>{val.title}</li>
-                          ))
-                        }
-                      </div>
+                          ))}
+                        </div>
                       </div>
                       <button
                         class="navbar-toggler"
@@ -196,88 +194,100 @@ class Header extends React.Component {
                         <span class="navbar-toggler-icon"></span>
                       </button>
 
-                      <div 
-                      
+                      <div
                         class="collapse navbar-collapse"
                         id="navbarSupportedContent"
                       >
-                        <ul style={{"display":" -webkit-inline-box",'float':'right'}} class="navbar-nav ml-auto">
-
-                          <Link href="/" >
+                        <ul
+                          style={{
+                            display: " -webkit-inline-box",
+                            float: "right",
+                          }}
+                          class="navbar-nav ml-auto"
+                        >
+                          <Link href="/">
                             <li class="nav-item active">
-                              <a class="nav-link" >
-                                Home
-                              </a>
+                              <a class="nav-link">Home</a>
                             </li>
                           </Link>
 
-                          <Link href="/explore" >
+                          <Link href="/explore">
                             <li class="nav-item">
-                              <a class="nav-link" >
-                                Explore
-                              </a>
+                              <a class="nav-link">Explore</a>
                             </li>
                           </Link>
-                          <Link href="/auth/SellerSignup/" >
+                          <Link href="/auth/SellerSignup/">
                             <li class="nav-item">
-                              <a class="nav-link" >
-                              Sell Your Services
-                              </a>
+                              <a class="nav-link">Sell Your Services</a>
                             </li>
                           </Link>
-                          {
-                            this.state.login_status=='unauthorize'?
-                                <Link href="/auth/login/" >
+                          {this.state.login_status == "unauthorize" ? (
+                            <Link href="/auth/login/">
+                              <li class="nav-item">
+                                <a class="nav-link join-btn">
+                                  Sign In/Register
+                                </a>
+                              </li>
+                            </Link>
+                          ) : this.state.admin == 0 ? (
+                            <Link href="/dashboard/feed">
+                              <li class="nav-item">
+                                <a class="nav-link join-btn">Dashboard</a>
+                              </li>
+                            </Link>
+                          ) : (
+                            <Link href="/admin/">
+                              <li class="nav-item">
+                                <a class="nav-link join-btn">Dashboard</a>
+                              </li>
+                            </Link>
+                          )}
+                        </ul>
+                      </div>
+                      <div id="dl-menu" class="dl-menuwrapper">
+                        <button onClick={this.toggle} class="dl-trigger">
+                          Open Menu
+                        </button>
+                        <div class="clearfix"></div>
+                        <ul class="dl-menu">
+                          <Link href="/">
+                            <li>
+                              <a>Home</a>
+                            </li>
+                          </Link>
+
+                          <Link href="/explore">
+                            <li>
+                              <a>Explore</a>
+                            </li>
+                          </Link>
+                          <Link href="/auth/login/">
+                            <li>
+                              <a>Sell your services</a>
+                            </li>
+                          </Link>
+                          <Link href="/auth/login/">
+                            {this.state.login_status == "unauthorize" ? (
+                              <Link href="/auth/login/">
                                 <li class="nav-item">
-                                  <a class="nav-link join-btn" >
+                                  <a class="nav-link join-btn">
                                     Sign In/Register
                                   </a>
                                 </li>
                               </Link>
-                            :
-                            this.state.admin==0?
-                            <Link href="/dashboard/feed" >
-                            <li class="nav-item">
-                              <a class="nav-link join-btn" >
-                              Dashboard
-                              </a>
-                            </li>
-                          </Link>
-                          :<Link href="/admin/" >
-                            <li class="nav-item">
-                              <a class="nav-link join-btn" >
-                              Dashboard
-                              </a>
-                            </li>
-                          </Link>
-                          }
-                          
-                        </ul>
-                      </div>
-                      <div id="dl-menu" class="dl-menuwrapper">
-                        <button onClick={this.toggle} class="dl-trigger">Open Menu</button>
-                        <div class="clearfix"></div>
-                        <ul class="dl-menu">
-                          <Link href="/" >
-                            <li>
-                              <a >Home</a>
-                            </li>
-                          </Link>
-
-                          <Link href="/explore" >
-                            <li>
-                              <a >Explore</a>
-                            </li>
-                          </Link>
-                          <Link href="/auth/login/" >
-                            <li>
-                              Sell your services
-                            </li>
-                          </Link>
-                          <Link href="/auth/login/" >
-                            <li>
-                              Sign In/Register
-                            </li>
+                            ) : this.state.admin == 0 ? (
+                              <Link href="/dashboard/feed">
+                                <li class="nav-item">
+                                  <a class="nav-link join-btn">Dashboard</a>
+                                </li>
+                              </Link>
+                            ) : (
+                              <Link href="/admin/">
+                                <li class="nav-item">
+                                  <a class="nav-link join-btn">Dashboard</a>
+                                </li>
+                              </Link>
+                            )}
                           </Link>
                         </ul>
                       </div>
@@ -293,21 +303,27 @@ class Header extends React.Component {
                 <div class="col-12">
                   <div class="header-bottom-inner">
                     <ul>
-                      {
-                        this.state.categories.map((item,key)=>(
-                          <Link href="/marketpalce/MarketplaceCategories" >
-                            <li>
-                              <a  onClick={()=> {
-                                this.setState({selecter_category:item._id})
-                                this.hendalgetAllsellers(item._id)}}
-                                class={`${this.state.selecter_category==item._id || this.props.category_filter==item._id ? "Primery_color" : ""} pb-0`} >
-                                  {item.title}
-                                </a>
-                            </li>
-                          </Link>
-                        ))
-                      }
-                      
+                      {this.state.categories.map((item, key) => (
+                        <Link href="/marketpalce/MarketplaceCategories">
+                          <li>
+                            <a
+                              onClick={() => {
+                                this.setState({ selecter_category: item._id });
+                                this.hendalgetAllsellers(item._id);
+                              }}
+                              class={`${
+                                this.state.selecter_category == item._id ||
+                                this.props.category_filter == item._id
+                                  ? "Primery_color"
+                                  : ""
+                              } pb-0`}
+                            >
+                              {item.title}
+                            </a>
+                          </li>
+                        </Link>
+                      ))}
+
                       {/* <li>
                         <a >Women’s Cut</a>
                       </li>
@@ -393,5 +409,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-
-export default connect(mapStateToProps, mapDispatchToProps) (Header);
+export default connect(mapStateToProps, mapDispatchToProps)(Header);
