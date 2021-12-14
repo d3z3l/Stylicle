@@ -362,7 +362,7 @@ class Banner extends React.Component {
             /span> <
             input type = "search"
             class = "form-control"
-            placeholder = "Search Your Services."
+            placeholder = "Search Your Servicess"
             value = { this.state.search_box_dropdown_selected_text }
             onChange = {
                 (e) => { this.search(e.target.value), this.setState({ search_box_dropdown: true, search_box_dropdown_selected_text: e.target.value }), e.target.value == '' ? (this.props._service_filter_item(''), this.props._service_filter('')) : null } }
