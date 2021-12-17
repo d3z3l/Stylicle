@@ -177,12 +177,19 @@ class Layout extends React.Component {
                 options={options}
               /> */}
               <div>
-                <select
+                <div>
+                  <h5 className="mt-0, ml-3">
+                    {this.props.user_data.business == null
+                      ? "Wellcome Seller"
+                      : "Wellcome Buyer"}
+                  </h5>
+                </div>
+                {/* <select
                   onChange={(e) => this.hendalChangeGroup(e.target.value)}
                   className="shadow-none mt-3 ml-3 border rounded py-2"
                 >
                   <option value="" disabled selected>
-                    select any
+                    select any sik
                   </option>
                   {this.state.group?.map((val, index) => (
                     <option
@@ -192,7 +199,7 @@ class Layout extends React.Component {
                       {val.business}
                     </option>
                   ))}
-                </select>
+                </select> */}
               </div>
             </div>
             <div class="border-b border-gray-20 flex justify-between items-center p-3 pl-5 relative uk-hidden@s">
@@ -277,7 +284,7 @@ class Layout extends React.Component {
                               d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
                             />
                           </svg>
-                          <span> Feed </span>{" "}
+                          <span> Feed</span>{" "}
                         </a>
                       </Link>
                     </li>

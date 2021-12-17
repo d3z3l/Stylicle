@@ -86,6 +86,14 @@ const Varification = async (data) => {
       status = "authorize";
     } catch (e) {
       status = "unauthorize";
+      // let Authenticated = jwt.verify(
+      //   cookie.load("Tokken"),
+      //   "erger34I&IY&IYI&TUI&TU^&TT*&G*&G&^T"
+      // );
+      // console.warn(
+      //   Authenticated,
+      //   "Authenticated Authenticated Authenticated Authenticated Authenticated Authenticated Authenticated Authenticated Authenticated Authenticated Authenticated Authenticated Authenticated Authenticated Authenticated Authenticated Authenticated Authenticated Authenticated Authenticated Authenticated Authenticated Authenticated Authenticated Authenticated Authenticated Authenticated "
+      // );
     }
 
     resolve({

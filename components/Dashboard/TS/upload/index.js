@@ -36,18 +36,15 @@ class Profile extends React.Component {
       new_image: "off",
     };
   }
-  componentDidMount=()=>{
+  componentDidMount = () => {
     this.setState({
       image: this.props.user_image,
       f_name: this.props.user_fname,
       l_name: this.props.user_lname,
       phone: this.props.user_phone,
-    })
-  }
-  componentWillMount() {
-   
-  }
-  
+    });
+  };
+  componentWillMount() {}
 
   handleUpload = async () => {
     await MediaHelper.Upload(this.state.image).then((resp) => {
@@ -66,7 +63,7 @@ class Profile extends React.Component {
     };
     console.log(TS);
     TS.Upload(data).then((resp) => {
-      Router.push('/dashboard/TS')
+      Router.push("/dashboard/TS");
 
       console.log(resp.data);
     });
@@ -95,7 +92,7 @@ class Profile extends React.Component {
       let marker = new maps.Marker({
         position: { lat: 40.856795, lng: -73.954298 },
         map,
-        
+
         draggable: true,
       });
     };
@@ -103,14 +100,17 @@ class Profile extends React.Component {
       <>
         <div class="grid lg:grid-cols-3 mt-12 gap-8">
           <div>
-            <h3 onClick={this.count} class="text-xl mb-2"> Basic</h3>
-            <p> Lorem ipsum dolor sit amet nibh consectetuer adipiscing elit</p>
+            <h3 onClick={this.count} class="text-xl mb-2">
+              {" "}
+              Basic
+            </h3>
+            <p>
+              Want a custom haircut please upload a reference photo for styling
+            </p>
           </div>
           <div class="bg-white rounded-md lg:shadow-lg shadow col-span-2 mt-5">
             <div class="grid grid-cols-2 gap-3 lg:p-6 p-4">
-              
-              
-            <div class="col-span-2">
+              <div class="col-span-2">
                 <label for="">Discription</label>
                 <textarea
                   type="text"
@@ -156,7 +156,6 @@ class Profile extends React.Component {
               </button>
             </div>
           </div>
-
         </div>
       </>
     );

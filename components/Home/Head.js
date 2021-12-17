@@ -102,7 +102,6 @@ class Header extends React.Component {
         opacity: "1",
         "pointer-events": "auto",
       });
-
       $(".overlay").show();
     }
     this.setState({ toggle: !this.state.toggle });

@@ -6,6 +6,19 @@ import AuthHelper from "../../../Helpers/AuthHelper";
 import cookie from "react-cookies";
 import KeyHandler, { KEYPRESS } from "react-key-handler";
 
+import IconButton from "@material-ui/core/IconButton";
+import InputLabel from "@material-ui/core/InputLabel";
+import Visibility from "@material-ui/icons/Visibility";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import VisibilityOff from "@material-ui/icons/VisibilityOff";
+import Input from "@material-ui/core/Input";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faMapMarkerAlt,
+  faArrowLeft,
+  faEye,
+} from "@fortawesome/free-solid-svg-icons";
+
 class CounterDisplay extends React.Component {
   constructor(props) {
     super(props);
@@ -14,6 +27,7 @@ class CounterDisplay extends React.Component {
       password: "",
       messages: "",
       secureEntry: true,
+      showPassword: false,
     };
   }
   componentDidMount = () => {
@@ -46,8 +60,22 @@ class CounterDisplay extends React.Component {
       }
     });
   };
+  // {showPassword: !values.showPassword }
 
   render() {
+    const handleMouseDownPassword = (event) => {
+      event.preventDefault();
+    };
+    const handlePasswordChange = (prop) => (event) => {
+      setValues({ [prop]: event.target.value });
+    };
+    const handleClickShowPassword = () => {
+      this.setState((preState) => ({
+        showPassword: !preState.showPassword,
+      }));
+    };
+    const xyz = cookie.load("Tokken");
+
     return (
       <div class="row m-0 h-100 align-items-center justify-content-md-center">
         <KeyHandler
@@ -86,6 +114,7 @@ class CounterDisplay extends React.Component {
               Email or Username
             </p>
             {/* <form action=""> */}
+            {/* <FormControl className="searchOrder"> */}
             <input
               type="text"
               onChange={(text) => [this.setState({ email: text.target.value })]}
@@ -95,23 +124,73 @@ class CounterDisplay extends React.Component {
                 }
               }}
               placeholder="example@mydomain.com"
-              class="bg-gray-200 mb-2 shadow-none dark:bg-gray-800"
-              style={{ border: "1px solid #d3d5d8 !important" }}
+              class=" mb-2 shadow-none dark:bg-gray-800"
+              // class="bg-gray-200 mb-2 shadow-none dark:bg-gray-800"
+              // style={{ border: "1px solid #d3d5d8 !important" }}
             />
-            <input
-              type="password"
-              onChange={(text) => [
-                this.setState({ password: text.target.value }),
-              ]}
-              onKeyPress={(event) => {
-                if (event.key === "Enter") {
-                  this.handleLogin();
+
+            {/* </FormControl> */}
+            <div class="d-flex p-0 m-0 align-items-center bg-white">
+              <input
+                type={this.state.showPassword === true ? "text" : "password"}
+                // type="password"
+                onChange={(text) => [
+                  this.setState({ password: text.target.value }),
+                ]}
+                onKeyPress={(event) => {
+                  if (event.key === "Enter") {
+                    this.handleLogin();
+                  }
+                }}
+                placeholder="***********"
+                class=" mb-0 shadow-none dark:bg-gray-800"
+                // class="bg-gray-200 mb-0 shadow-none dark:bg-gray-800"
+                // onKeyPress={this.handleLogin}
+                // style={{ border: "1px solid #d3d5d8 !important" }}
+              />
+              <FontAwesomeIcon
+                style={{
+                  color: "#95979d",
+                  fontSize: "15px",
+                  cursor: "pointer",
+                  // margin: "0px 0px 0px 20px",
+                  // paddingRight: "20px",
+                  marginRight: "10px",
+                }}
+                icon={faEye}
+                onClick={() =>
+                  this.setState((preState) => ({
+                    showPassword: !preState.showPassword,
+                  }))
                 }
-              }}
-              placeholder="***********"
-              class="bg-gray-200 mb-2 shadow-none dark:bg-gray-800"
-              style={{ border: "1px solid #d3d5d8 !important" }}
-            />
+              />
+            </div>
+
+            {/* <span>
+              <div class="checkbox">
+                <FontAwesomeIcon
+                  style={{
+                    color: "#95979d",
+                    fontSize: "16px",
+                    cursor: "pointer",
+                    margin: "0px 5px",
+                  }}
+                  icon={faMapMarkerAlt}
+                />
+                <input
+                  onClick={() =>
+                    this.setState((preState) => ({
+                      showPassword: !preState.showPassword,
+                    }))
+                  }
+                  type="checkbox"
+                  id="chekcbox2"
+                />
+                <label for="chekcbox2">
+                  <span class="checkbox-icon"></span>show password
+                </label>
+              </div>
+            </span> */}
             <div class="flex justify-between my-4">
               <div class="checkbox">
                 <input

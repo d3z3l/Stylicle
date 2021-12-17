@@ -10,35 +10,31 @@ import { faMapMarker } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Router from "next/router";
 
-
 class Profile extends React.Component {
-  
   constructor(props) {
     super(props);
     this.state = {
       f_name: this.props.user_fname,
       l_name: this.props.user_lname,
       phone: this.props.user_phone,
-      p_phone: '',
+      p_phone: "",
       image: this.props.user_image,
-      banner_image: '',
-      business: '',
-      address: '',
-      p_address: '',
-      disc: '',
-      gender: '',
-      personal_title: '',
-      job_title: '',
-      consultation_price: '',
+      banner_image: "",
+      business: "",
+      address: "",
+      p_address: "",
+      disc: "",
+      gender: "",
+      personal_title: "",
+      job_title: "",
+      consultation_price: "",
       new_image: "off",
       new_banner_image: "off",
       lat: 1,
       lng: 1,
-
     };
   }
-  componentDidMount=()=>{
-         
+  componentDidMount = () => {
     setTimeout(() => {
       this.setState({
         image: this.props.user_image,
@@ -56,14 +52,11 @@ class Profile extends React.Component {
         disc: this.props.user_data.disc,
         job_title: this.props.user_data.job_title,
         consultation_price: this.props.user_data.consultation_price,
-        lat:JSON.parse(this.props.user_data.geo_location).lat,
-        lng:JSON.parse(this.props.user_data.geo_location).lng,
-        
-      })
+        lat: JSON.parse(this.props.user_data.geo_location).lat,
+        lng: JSON.parse(this.props.user_data.geo_location).lng,
+      });
     }, 2000);
-    
-  }
-  
+  };
 
   handleUpload = async () => {
     await MediaHelper.Upload(this.state.image).then((resp) => {
@@ -82,48 +75,48 @@ class Profile extends React.Component {
     // console.log(this.state.image);
   };
   hendalStatus = async () => {
-    
-    console.log(this.props.user_data.package[0]!=undefined);
-    if (this.props.user_data.package[0]==undefined) {
-      Router.push('/packages')
+    console.log(this.props.user_data.package[0] != undefined);
+    if (this.props.user_data.package[0] == undefined) {
+      Router.push("/packages");
     } else {
-        let data={}
-        if (this.state.status=='0') {
-          this.setState({status:'1'})
-          data={role_id:'1'}
-        } else {
-            this.setState({status:'0'})
-            data={role_id:'0'}
-        }
-        AuthHelper.Update(data).then((resp)=>{
-    
-          console.log(resp);
-        })
-        this.getUserHendal()
+      let data = {};
+      if (this.state.status == "0") {
+        this.setState({ status: "1" });
+        data = { role_id: "1" };
+      } else {
+        this.setState({ status: "0" });
+        data = { role_id: "0" };
+      }
+      AuthHelper.Update(data).then((resp) => {
+        console.log(resp);
+      });
+      this.getUserHendal();
     }
-
   };
-  getUserHendal= async ()=>{
-    await AuthHelper.Get().then((resp)=>{
-     this.props._user_fname(resp.data.data.user.name.split(" ").slice(0, -1).join(" "))
-     this.props._user_lname(resp.data.data.user.name.split(" ").slice(-1).join(" "))
-     this.props._user_phone(resp.data.data.user.phone)
-     this.props._user_image(resp.data.data.user.image)
-     this.props._user_workinghours(resp.data.data.user.workinghours)
-     this.props._user_data(resp.data.data.user);
-     });    
-   }
+  getUserHendal = async () => {
+    await AuthHelper.Get().then((resp) => {
+      this.props._user_fname(
+        resp.data.data.user.name.split(" ").slice(0, -1).join(" ")
+      );
+      this.props._user_lname(
+        resp.data.data.user.name.split(" ").slice(-1).join(" ")
+      );
+      this.props._user_phone(resp.data.data.user.phone);
+      this.props._user_image(resp.data.data.user.image);
+      this.props._user_workinghours(resp.data.data.user.workinghours);
+      this.props._user_data(resp.data.data.user);
+    });
+  };
   handleLogin = async () => {
-    
     if (this.state.new_image == "on") {
       await this.handleUpload();
     }
     if (this.state.new_banner_image == "on") {
       await this.handlebanner_Upload();
     }
-    
+
     var data = {
-      name: this.state.f_name ,
+      name: this.state.f_name,
       phone: this.state.phone,
       p_phone: this.state.p_phone,
       image: this.state.image,
@@ -135,21 +128,20 @@ class Profile extends React.Component {
       disc: this.state.disc,
       job_title: this.state.job_title,
       consultation_price: this.state.consultation_price,
-      geo_location:'{"lat":'+this.state.lat+',"lng":'+this.state.lng+'}',
+      geo_location:
+        '{"lat":' + this.state.lat + ',"lng":' + this.state.lng + "}",
     };
     AuthHelper.Update(data).then((resp) => {
-      
-      this.getUserHendal()
+      this.getUserHendal();
       console.log(resp.data);
     });
   };
-  
-  setLatlong=(lat,lng)=>{
-    this.setState({lat,lng})
+
+  setLatlong = (lat, lng) => {
+    this.setState({ lat, lng });
     // alert(lat)
-  }
+  };
   render() {
-    
     return (
       <>
         <div class=" grid lg:grid-cols-3 mt-12 gap-8">
@@ -158,34 +150,64 @@ class Profile extends React.Component {
             <p> Add/Update your Stylicle Account picture, name & other info</p>
           </div>
           <div class=" bg-white rounded-md lg:shadow-lg shadow col-span-2">
-
-
-
-          
-
-
             <div class=" grid grid-cols-2 gap-3 lg:p-6 p-4">
-              
-            <div class="outhform_profile lg:flex-row flex-col lg:space-x-2 col-span-2" >
-            <label>Gender</label>
-              <select  onChange={(text) => [
-                  this.setState({ gender: text.target.value }),
-                ]} class="bg-gray-200 mb-2 shadow-none  dark:bg-gray-800">
-                  <option selected={''==''} value='' disabled >Select Any Gender</option>
-                  <option selected={this.state.gender=='Male'} value="Male">Male</option>
-                  <option selected={this.state.gender=='Female'} value="Female">Female</option>
-              </select>
-              <label>Title</label>
-              <select  onChange={(text) => [
-                  this.setState({ personal_title: text.target.value }),
-                ]} class="bg-gray-200 mb-2 shadow-none  dark:bg-gray-800">
-                  <option selected={''==''} value='' disabled >Select Any Title</option>
-                  <option selected={this.state.personal_title=='Mr'} value="Mr">Mr</option>
-                  <option selected={this.state.personal_title=='Mrs'} value="Mrs">Mrs</option>
-                  <option selected={this.state.personal_title=='Miss'} value="Miss">Miss</option>
-                  <option selected={this.state.personal_title=='Ms'} value="Ms">Ms</option>
-              </select>
-          </div>
+              <div class="outhform_profile lg:flex-row flex-col lg:space-x-2 col-span-2">
+                <label>Gender</label>
+                <select
+                  onChange={(text) => [
+                    this.setState({ gender: text.target.value }),
+                  ]}
+                  class="bg-gray-200 mb-2 shadow-none  dark:bg-gray-800"
+                >
+                  <option selected={"" == ""} value="" disabled>
+                    Select Any Gender
+                  </option>
+                  <option selected={this.state.gender == "Male"} value="Male">
+                    Male
+                  </option>
+                  <option
+                    selected={this.state.gender == "Female"}
+                    value="Female"
+                  >
+                    Female
+                  </option>
+                </select>
+                <label>Title</label>
+                <select
+                  onChange={(text) => [
+                    this.setState({ personal_title: text.target.value }),
+                  ]}
+                  class="bg-gray-200 mb-2 shadow-none  dark:bg-gray-800"
+                >
+                  <option selected={"" == ""} value="" disabled>
+                    Select Any Title
+                  </option>
+                  <option
+                    selected={this.state.personal_title == "Mr"}
+                    value="Mr"
+                  >
+                    Mr
+                  </option>
+                  <option
+                    selected={this.state.personal_title == "Mrs"}
+                    value="Mrs"
+                  >
+                    Mrs
+                  </option>
+                  <option
+                    selected={this.state.personal_title == "Miss"}
+                    value="Miss"
+                  >
+                    Miss
+                  </option>
+                  <option
+                    selected={this.state.personal_title == "Ms"}
+                    value="Ms"
+                  >
+                    Ms
+                  </option>
+                </select>
+              </div>
               <div>
                 <label for="">Name</label>
                 <input
@@ -199,7 +221,7 @@ class Profile extends React.Component {
                   class="shadow-none bg-gray-100"
                 />
               </div>
-              
+
               <div>
                 <label for="">Home Address</label>
                 <input
@@ -212,8 +234,8 @@ class Profile extends React.Component {
                   class="shadow-none bg-gray-100"
                 />
               </div>
-              
-              <div >
+
+              <div>
                 <label for="">Personal Phone</label>
                 <input
                   type="text"
@@ -225,28 +247,27 @@ class Profile extends React.Component {
                   class="shadow-none bg-gray-100"
                 />
               </div>
-              
-              <div  >
+
+              <div>
                 <label class="col-span-2 " for="">
                   Profile image
                 </label>
                 <input
-                type="file"
-                // value={this.state.image}
-                placeholder=""
-                    class="shadow-none bg-gray-100 "
+                  type="file"
+                  // value={this.state.image}
+                  placeholder=""
+                  class="shadow-none bg-gray-100 "
                   onChange={(text) => [
                     this.setState({
                       image: text.target.files[0],
                       new_image: "on",
                     }),
                   ]}
-                  
-                  />
-                <p class="mt-2" >Recommend image size:500px x 500px</p>           
+                />
+                <p class="mt-2">Recommend image size:500px x 500px</p>
               </div>
-                </div>
-                <div class="switch-container">
+            </div>
+            <div class="switch-container">
               {/* <label class="switch">
                 <input
                 onClick={()=>{this.hendalStatus()}} 
@@ -271,40 +292,36 @@ class Profile extends React.Component {
             </div>
           </div>
 
-          <div>
-              
-          </div>
+          <div></div>
           <div class="bg-white rounded-md lg:shadow-lg shadow lg:p-6 p-4 col-span-2">
-
-              <div class="space-y-3">
-                  <div class="flex justify-between items-center">
-                      <div>
-                          <h4>Change Your Account Status</h4>
-                          <div> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, </div>
-                      </div>
-                      <div class="switches-list -mt-8 is-large">
-                          <div class="switch-container">
-                              <label class="switch">
-                                <input
-                                  onClick={()=>{this.hendalStatus()}} 
-                                  checked={ this.state.status!='0'}
-                                  type="checkbox" class="off_1"
-                                />
-                                <span class="switch-button" ></span>
-                              </label>
-                          </div>
-                      </div>
+            <div class="space-y-3">
+              <div class="flex justify-between items-center">
+                <div>
+                  <h4>Change Your Account Status</h4>
+                  <div></div>
+                </div>
+                <div class="switches-list -mt-8 is-large">
+                  <div class="switch-container d-flex mt-4 align-items-center">
+                    <span>Buyer</span>
+                    <label class="switch">
+                      <input
+                        onClick={() => {
+                          this.hendalStatus();
+                        }}
+                        checked={this.state.status != "0"}
+                        type="checkbox"
+                        class="off_1"
+                      />
+                      <span class="switch-button"></span>
+                    </label>
+                    <span>Seller</span>
                   </div>
-                  
+                </div>
               </div>
-
+            </div>
           </div>
 
-
-          <div>
-            
-          </div>
-          
+          <div></div>
         </div>
       </>
     );

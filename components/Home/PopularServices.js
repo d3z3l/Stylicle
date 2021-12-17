@@ -18,8 +18,26 @@ export default class Banner extends React.Component {
     super(props);
     this.state = {
       services: [],
+      responsive: {
+        0: {
+          items: 1,
+        },
+        450: {
+          items: 2,
+        },
+        600: {
+          items: 3,
+        },
+        1000: {
+          items: 4,
+        },
+        1200: {
+          items: 5,
+        },
+      },
     };
   }
+
   componentDidMount = () => {
     this.hendalGetServices();
   };
@@ -49,11 +67,14 @@ export default class Banner extends React.Component {
             </div>
             {this.state.services.length != 0 ? (
               <OwlCarousel
-                className="owl-theme "
+                className="owl-theme"
                 items={5}
                 loop={true}
                 dots={false}
                 margin={10}
+                autoplay={true}
+                // autoplayTimeout={2000}
+                responsive={this.state.responsive}
               >
                 {this.state.services.map((val, index) => (
                   <>

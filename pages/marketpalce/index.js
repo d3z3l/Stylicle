@@ -8,14 +8,14 @@ import AuthHelper from "../../Helpers/AuthHelper";
 import ReservationsHelper from "../../Helpers/ReservationsHelper";
 import OrdersHelper from "../../Helpers/OrdersHelper";
 import generalHelper from "../../Helpers/GeneralHelper";
-import { faCar,faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faCar, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { connect } from "react-redux";
 import WorkingHours from "../../components/Marketpalce/WorkingHours";
 import Reservations from "../../components/Marketpalce/Reservations";
 import Services from "../../components/Marketpalce/Services";
-import $ from 'jquery'
-import Router from 'next/router'
+import $ from "jquery";
+import Router from "next/router";
 import DatePicker from "react-mobile-datepicker";
 var moment = require("moment");
 import dynamic from "next/dynamic";
@@ -37,10 +37,8 @@ const OwlCarousel = dynamic(
 );
 class ViewSeller extends React.Component {
   state = {
-
-    seller_id:'60d486cf6d124a03411d5b80',
-    customer_val:'60a38c29f1b5b618593e5a4f',
-
+    seller_id: "60d486cf6d124a03411d5b80",
+    customer_val: "60a38c29f1b5b618593e5a4f",
 
     time: new Date(),
     isOpen: false,
@@ -50,65 +48,73 @@ class ViewSeller extends React.Component {
     afternon: "",
     evening: "",
     time_slots: [],
-    service_val:'',
-    service_price:'',
-    service_duration:'',
-    service_title:'',
-    service_time_slote:'',
+    service_val: "",
+    service_price: "",
+    service_duration: "",
+    service_title: "",
+    service_time_slote: "",
 
-    reservations:[],
-    Seller_data:null,
-    Assign_services:null,
-    
+    reservations: [],
+    Seller_data: null,
+    Assign_services: null,
   };
   componentDidMount = () => {
-    AuthHelper.Varification().then((data)=>{
-      if (data.status=='unauthorize') {
-        Router.push('/auth/login')
-      } 
-    })
+    AuthHelper.Varification().then((data) => {
+      if (data.status == "unauthorize") {
+        Router.push("/auth/login");
+      }
+    });
     this.handleLimit();
     this.hendalReservationsGet();
     this.hendleSellerData(this.state.customer_val);
   };
   hendalReservationCreate = () => {
     for (let i = 0; i < this.state.reservations.length; i++) {
-      let element = this.state.reservations[i]
-      if (element.time_slot.start_time <= this.state.service_time_slote.start_time &&  element.time_slot.end_time >= this.state.service_time_slote.end_time) {
-        return false
+      let element = this.state.reservations[i];
+      if (
+        element.time_slot.start_time <=
+          this.state.service_time_slote.start_time &&
+        element.time_slot.end_time >= this.state.service_time_slote.end_time
+      ) {
+        return false;
       }
-      
     }
-     let data={
-      seller:this.state.seller_id,
-      slots:this.state.service_time_slote,
-      service:this.state.service_val,
-      price:this.state.service_price,
-      date:(new Date().valueOf())/1000,
-      status:0
-      }
-    ReservationsHelper.create(data).then((resp)=>{
-      this.hendalReservationsGet()
+    let data = {
+      seller: this.state.seller_id,
+      slots: this.state.service_time_slote,
+      service: this.state.service_val,
+      price: this.state.service_price,
+      date: new Date().valueOf() / 1000,
+      status: 0,
+    };
+    ReservationsHelper.create(data).then((resp) => {
+      this.hendalReservationsGet();
       // this.setState({reservations:[...this.state.reservations,resp.data.data.details]})
-    })
+    });
   };
   hendalReservationsGet = () => {
-     let data={
-      seller:this.state.seller_id
-      }
-    ReservationsHelper.get(data).then((resp)=>{
-      this.setState({reservations:resp.data.data.orders})
-    })
+    let data = {
+      seller: this.state.seller_id,
+    };
+    ReservationsHelper.get(data).then((resp) => {
+      this.setState({ reservations: resp.data.data.orders });
+    });
   };
   hendalSearch = (e) => {
     var regEx = new RegExp(e.toLowerCase(), "g");
-     let data=this.state.Seller_data.assignservices.filter((assignservices) => !!assignservices.services[0].title.toLowerCase().match(regEx))
-     this.setState({Assign_services:data})
+    let data = this.state.Seller_data.assignservices.filter(
+      (assignservices) =>
+        !!assignservices.services[0].title.toLowerCase().match(regEx)
+    );
+    this.setState({ Assign_services: data });
   };
   hendleSellerData = (id) => {
-   AuthHelper.Get_by_id(id).then((resp)=>{
-     this.setState({Seller_data:resp.data.data.user,Assign_services:resp.data.data.user.assignservices})
-   })
+    AuthHelper.Get_by_id(id).then((resp) => {
+      this.setState({
+        Seller_data: resp.data.data.user,
+        Assign_services: resp.data.data.user.assignservices,
+      });
+    });
   };
   handleLimit = () => {
     var today = moment();
@@ -117,16 +123,16 @@ class ViewSeller extends React.Component {
     this.setState({ min_date: mindate.toDate(), max_date: maxdate.toDate() });
   };
   handleSelectDate = (time) => {
-    console.warn(time, "time test")
-    console.warn(time, "time test")
-    console.warn(time, "time test")
-    console.warn("sikandar ali")
+    console.warn(time, "time test");
+    console.warn(time, "time test");
+    console.warn(time, "time test");
+    console.warn("sikandar ali");
     let data = {
       path: "service_time_slots/60ab3a33833b3e059d5a9893",
       type: "POST",
       data: {
         date: time.unix(),
-        day: moment(time).day()==0 ?7:moment(time).day(),
+        day: moment(time).day() == 0 ? 7 : moment(time).day(),
         customer: this.state.customer_val,
         services_val: this.state.service_val,
       },
@@ -140,12 +146,16 @@ class ViewSeller extends React.Component {
         if (element.start_time < 43200) {
           morning.push(
             <li>
-              <a onClick={()=>  this.hendalVarifyTime(element)} class={element._id} href="#.">
+              <a
+                onClick={() => this.hendalVarifyTime(element)}
+                class={element._id}
+                href="#."
+              >
                 {moment(
                   new Date(
                     (element.start_time + new Date().getTimezoneOffset() * 60) *
                       1000
-                         )
+                  )
                 ).format("LT")}
               </a>
             </li>
@@ -153,7 +163,11 @@ class ViewSeller extends React.Component {
         } else if (element.start_time < 61200) {
           afternon.push(
             <li>
-              <a onClick={()=>  this.hendalVarifyTime(element)} class={element._id}   href="#.">
+              <a
+                onClick={() => this.hendalVarifyTime(element)}
+                class={element._id}
+                href="#."
+              >
                 {moment(
                   new Date(
                     (element.start_time + new Date().getTimezoneOffset() * 60) *
@@ -166,7 +180,11 @@ class ViewSeller extends React.Component {
         } else {
           evening.push(
             <li>
-              <a onClick={()=>  this.hendalVarifyTime(element)}  class={element._id}  href="#.">
+              <a
+                onClick={() => this.hendalVarifyTime(element)}
+                class={element._id}
+                href="#."
+              >
                 {moment(
                   new Date(
                     (element.start_time + new Date().getTimezoneOffset() * 60) *
@@ -183,57 +201,61 @@ class ViewSeller extends React.Component {
   };
   hendalVarifyTime = (element) => {
     for (let i = 0; i < this.state.reservations.length; i++) {
-      let element2 = this.state.reservations[i]
-      if (element2.time_slot.start_time <= element.start_time &&  element2.time_slot.end_time >= element.end_time) {
-        return false
+      let element2 = this.state.reservations[i];
+      if (
+        element2.time_slot.start_time <= element.start_time &&
+        element2.time_slot.end_time >= element.end_time
+      ) {
+        return false;
       }
     }
-    $('.'+this.state.service_time_slote._id).removeClass('selected_time_slote')
-    $('.'+element._id).addClass('selected_time_slote')
-    this.setState({service_time_slote:element})
+    $("." + this.state.service_time_slote._id).removeClass(
+      "selected_time_slote"
+    );
+    $("." + element._id).addClass("selected_time_slote");
+    this.setState({ service_time_slote: element });
   };
-  hendalOrders = (element) => { 
-    var price=0
-    let details=[]
+  hendalOrders = (element) => {
+    var price = 0;
+    let details = [];
     for (let i = 0; i < this.state.reservations.length; i++) {
       const element = this.state.reservations[i];
-      price+=element.time_slot.assignservices.price
-      details.push(element._id)
+      price += element.time_slot.assignservices.price;
+      details.push(element._id);
       console.log(element._id);
     }
     console.log(details);
 
-    let data={
-      seller:this.state.seller_id,
-      price:price,
-      qty:this.state.reservations.length,
-      Payment_method:2,
-      date:(new Date().valueOf())/1000,
-      customer:this.state.customer_val,
-      details:details
-    }
-    OrdersHelper.create(data).then((resp)=>{
-      this.setState({reservations:[]})
+    let data = {
+      seller: this.state.seller_id,
+      price: price,
+      qty: this.state.reservations.length,
+      Payment_method: 2,
+      date: new Date().valueOf() / 1000,
+      customer: this.state.customer_val,
+      details: details,
+    };
+    OrdersHelper.create(data).then((resp) => {
+      this.setState({ reservations: [] });
       // console.log(resp);
-    })
+    });
   };
 
-  renderInput(props, openCalendar, closeCalendar) {
-   
-    return (
-      <div>
-        <input {...props} />
-        <button onClick={openCalendar}>open calendar</button>
-        <button onClick={closeCalendar}>close calendar</button>
-        <button onClick={clear}>clear</button>
-      </div>
-    );
-  }
+  // renderInput(props, openCalendar, closeCalendar) {
+
+  //   return (
+  //     <div>
+  //       <input {...props} />
+  //       <button onClick={openCalendar}>open calendar</button>
+  //       <button onClick={closeCalendar}>close calendar</button>
+  //       <button onClick={clear}>clear</button>
+  //     </div>
+  //   );
+  // }
 
   render() {
     return (
       <>
-      
         <Header />
         <div
           class="modal fade"
@@ -265,8 +287,16 @@ class ViewSeller extends React.Component {
                 <div class="bookingmodal_1" style={{ display: " none" }}>
                   <h4>Select Service</h4>
                   <div class="babrerbox">
-                    <h1>{this.state.Seller_data!=null?this.state.Seller_data.name:null}</h1>
-                    <p>{this.state.Seller_data!=null?this.state.Seller_data.email:null}</p>
+                    <h1>
+                      {this.state.Seller_data != null
+                        ? this.state.Seller_data.name
+                        : null}
+                    </h1>
+                    <p>
+                      {this.state.Seller_data != null
+                        ? this.state.Seller_data.email
+                        : null}
+                    </p>
                     <span>
                       <i class="fas fa-star"></i>
                       <i class="fas fa-star"></i>
@@ -276,26 +306,36 @@ class ViewSeller extends React.Component {
                     </span>
                   </div>
 
-                  {
-
-                    this.state.Assign_services!=null?(
-                      // this.state.Assign_services.length!=0?(
-                        this.state.Assign_services.map((val,index)=>(
-
-
-                          <Services  onPress={()=> {$('.bookingmodal_2').show(),$('.bookingmodal_1').hide()}} onBook={()=>this.setState({service_val:val._id,service_price:val.price,service_duration:val.duration,service_title:val.services.title,morning:'',afternon:'',evening:''})} title={val.services.title} duration={val.duration} modal_close={'no'} price={val.price} />
-                        ))
-                      //  ):null
-                    ):null
-                  }
-
-
-
-
-
+                  {this.state.Assign_services != null
+                    ? // this.state.Assign_services.length!=0?(
+                      this.state.Assign_services.map((val, index) => (
+                        <Services
+                          onPress={() => {
+                            $(".bookingmodal_2").show(),
+                              $(".bookingmodal_1").hide();
+                          }}
+                          onBook={() =>
+                            this.setState({
+                              service_val: val._id,
+                              service_price: val.price,
+                              service_duration: val.duration,
+                              service_title: val.services.title,
+                              morning: "",
+                              afternon: "",
+                              evening: "",
+                            })
+                          }
+                          title={val.services.title}
+                          duration={val.duration}
+                          modal_close={"no"}
+                          price={val.price}
+                        />
+                      ))
+                    : //  ):null
+                      null}
                 </div>
                 <div class="bookingmodal_2">
-                  <h4 >
+                  <h4>
                     <i class="fas fa-chevron-left mr-2 float-left"></i> Pick a
                     date & time
                   </h4>
@@ -310,9 +350,8 @@ class ViewSeller extends React.Component {
                     closeOnSelect={true}
                     utc={true}
                     onChange={this.handleSelectDate}
-                   
                   />
-                 
+
                   <hr />
                   <div class="row days">
                     <span class="col">MORNING</span>
@@ -349,7 +388,9 @@ class ViewSeller extends React.Component {
                             <div class="purify">
                               <strong>${this.state.service_price}</strong>
                             </div>
-                            <span class="purify_2vd">{this.state.service_duration}min</span>
+                            <span class="purify_2vd">
+                              {this.state.service_duration}min
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -362,31 +403,46 @@ class ViewSeller extends React.Component {
                         </button>
                       </div>
                     </div>
-                    <hr/>
+                    <hr />
                     <div>
-                      <span  onClick={()=> {$('.bookingmodal_2').hide(),$('.bookingmodal_1').show()}} >
-                          <FontAwesomeIcon
-                            style={{
-                              color: config.primaryColor,
-                              fontSize:'20px',
-                              cursor: "pointer"
-                            }}
-                            icon={faPlus}
-                          />
-                        </span>
-                        <label class="p-3" >add more</label>
+                      <span
+                        onClick={() => {
+                          $(".bookingmodal_2").hide(),
+                            $(".bookingmodal_1").show();
+                        }}
+                      >
+                        <FontAwesomeIcon
+                          style={{
+                            color: config.primaryColor,
+                            fontSize: "20px",
+                            cursor: "pointer",
+                          }}
+                          icon={faPlus}
+                        />
+                      </span>
+                      <label class="p-3">add more</label>
                     </div>
-                    {
-                      this.state.reservations.map((val,index)=>(
+                    {this.state.reservations.map(
+                      (val, index) => (
                         console.log(val.time_slot.assignservices.services),
-
-                        <Reservations title={val.time_slot.assignservices.services[0].title}  start_time={val.time_slot.start_time} end_time={val.time_slot.end_time} price={val.time_slot.assignservices.price} />
-                         
-                      ))
-                    }
-
+                        (
+                          <Reservations
+                            title={
+                              val.time_slot.assignservices.services[0].title
+                            }
+                            start_time={val.time_slot.start_time}
+                            end_time={val.time_slot.end_time}
+                            price={val.time_slot.assignservices.price}
+                          />
+                        )
+                      )
+                    )}
                   </div>
-                  <a onClick={this.hendalOrders} href="#." class="btn btn-info btn-block btn-lg">
+                  <a
+                    onClick={this.hendalOrders}
+                    href="#."
+                    class="btn btn-info btn-block btn-lg"
+                  >
                     CONFRIME
                   </a>
                 </div>
@@ -473,96 +529,92 @@ class ViewSeller extends React.Component {
                       />
                       <i class="fas fa-car"></i> Traveling service{" "}
                     </h2>
-                    <h1>{this.state.Seller_data!=null?this.state.Seller_data.name:null}</h1>
-                    <p>{this.state.Seller_data!=null?this.state.Seller_data.email:null}</p>
+                    <h1>
+                      {this.state.Seller_data != null
+                        ? this.state.Seller_data.name
+                        : null}
+                    </h1>
+                    <p>
+                      {this.state.Seller_data != null
+                        ? this.state.Seller_data.email
+                        : null}
+                    </p>
                     <span>
                       <i class="far fa-heart"></i>
                     </span>
                   </div>
 
-
-
                   <div class="barbersearch">
-          <div class="row">
-            <div class="col-md-6">
-              <h1>Services</h1>
-            </div>
-            <div class="col-md-6">
-              <input
-              onChange={(e)=>this.hendalSearch(e.target.value)}
-                type="text"
-                class="form-control"
-                placeholder="Search for services"
-              />
-            </div>
-          </div>
-        </div>
-        <div id="accordion" class="accordion">
-          <div class="mb-0">
-            
-          {
+                    <div class="row">
+                      <div class="col-md-6">
+                        <h1>Services</h1>
+                      </div>
+                      <div class="col-md-6">
+                        <input
+                          onChange={(e) => this.hendalSearch(e.target.value)}
+                          type="text"
+                          class="form-control"
+                          placeholder="Search for services"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div id="accordion" class="accordion">
+                    <div class="mb-0">
+                      {this.state.Assign_services != null
+                        ? // this.state.Assign_services.length!=0?(
+                          this.state.Assign_services.map((val, index) => (
+                            <Services
+                              onBook={() =>
+                                this.setState({
+                                  service_val: val._id,
+                                  service_price: val.price,
+                                  service_duration: val.duration,
+                                  service_title: val.services.title,
+                                  morning: "",
+                                  afternon: "",
+                                  evening: "",
+                                })
+                              }
+                              title={val.services.title}
+                              duration={val.duration}
+                              price={val.price}
+                            />
+                          ))
+                        : //  ):null
+                          null}
+                      {/* <Services/> */}
+                    </div>
+                  </div>
+                  <div class="venue_box">
+                    <h1>Venue Health and Safety Rules</h1>
+                    <ul>
+                      <li>
+                        <i class="fas fa-shield-alt"></i> Employees wear masks
+                      </li>
+                      <li>
+                        <i class="fas fa-shield-alt"></i> Disinfection of all
+                        surfaces in the workplace
+                      </li>
+                      <li>
+                        <i class="fas fa-shield-alt"></i> Disinfection between
+                        clients
+                      </li>
+                      <li>
+                        <i class="fas fa-shield-alt"></i> Maintain social
+                        distancing
+                      </li>
+                      <li>
+                        <i class="fas fa-shield-alt"></i> Barbicide COVID-19
+                        Certified
+                      </li>
+                      <li>
+                        <i class="fas fa-shield-alt"></i> Place to wash hands
+                        available
+                      </li>
+                    </ul>
+                  </div>
 
-            this.state.Assign_services!=null?(
-              // this.state.Assign_services.length!=0?(
-                this.state.Assign_services.map((val,index)=>(
-                
-                  <Services onBook={()=>this.setState({service_val:val._id,service_price:val.price,service_duration:val.duration,service_title:val.services.title,morning:'',afternon:'',evening:''})} title={val.services.title} duration={val.duration} price={val.price} />
-                ))
-              //  ):null
-            ):null
-
-          
-            
-          }
-                  {/* <Services/> */}
-
-
-
-
-
-
-
-                  
-       
-       
-          
-                  
-          </div>
-        </div>
-        <div class="venue_box">
-          <h1>Venue Health and Safety Rules</h1>
-          <ul>
-            <li>
-              <i class="fas fa-shield-alt"></i> Employees wear masks
-            </li>
-            <li>
-              <i class="fas fa-shield-alt"></i> Disinfection of all surfaces in
-              the workplace
-            </li>
-            <li>
-              <i class="fas fa-shield-alt"></i> Disinfection between clients
-            </li>
-            <li>
-              <i class="fas fa-shield-alt"></i> Maintain social distancing
-            </li>
-            <li>
-              <i class="fas fa-shield-alt"></i> Barbicide COVID-19 Certified
-            </li>
-            <li>
-              <i class="fas fa-shield-alt"></i> Place to wash hands available
-            </li>
-          </ul>
-        </div>
-
-
-
-                
-                
-                
-
-
-
-                
                   <div class="venue_box">
                     <h1>See Our Work</h1>
                     <div class="row">
@@ -624,13 +676,23 @@ class ViewSeller extends React.Component {
                         <div class="row">
                           <div class="col-md-6">
                             <p>
-                              <i class="fas fa-mobile-alt mr-2 mt-3"></i> {this.state.Seller_data!=null?this.state.Seller_data.phone:null}
+                              <i class="fas fa-mobile-alt mr-2 mt-3"></i>{" "}
+                              {this.state.Seller_data != null
+                                ? this.state.Seller_data.phone
+                                : null}
                             </p>
                           </div>
                           <div class="col-md-6">
                             <div class="bookbtnrow">
                               <div class="purify_3kC">
-                                <a href={ this.state.Seller_data!=null?'tel:'+this.state.Seller_data.phone:null}  class="btn btn-info">
+                                <a
+                                  href={
+                                    this.state.Seller_data != null
+                                      ? "tel:" + this.state.Seller_data.phone
+                                      : null
+                                  }
+                                  class="btn btn-info"
+                                >
                                   Call
                                 </a>
                               </div>
@@ -638,21 +700,13 @@ class ViewSeller extends React.Component {
                           </div>
                         </div>
                       </div>
-                        {
-                          this.state.Seller_data!=null?(
-                            this.state.Seller_data.workinghours.length!=0?(<WorkingHours  WorkingHours={this.state.Seller_data.workinghours} />):null
-                          ):null
-                        }
-
-                        
-
-
-
-
-
-
-
-
+                      {this.state.Seller_data != null ? (
+                        this.state.Seller_data.workinghours.length != 0 ? (
+                          <WorkingHours
+                            WorkingHours={this.state.Seller_data.workinghours}
+                          />
+                        ) : null
+                      ) : null}
                     </div>
                     <div class="p-3">
                       <h1>Social Media & Share</h1>
