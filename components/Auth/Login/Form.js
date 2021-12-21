@@ -51,9 +51,17 @@ class CounterDisplay extends React.Component {
       if (resp.data.status != "success") {
         this.setState({ messages: resp.data.status });
       } else if (resp.data.nav == "packages") {
+        // console.warn(
+        //   resp.data,
+        //   "resp.data.nav resp.data.nav resp.data.nav resp.data.nav resp.data.nav resp.data.nav resp.data.nav resp.data.nav resp.data.nav resp.data.nav resp.data.nav resp.data.nav resp.data.nav resp.data.nav resp.data.nav resp.data.nav resp.data.nav resp.data.nav resp.data.nav resp.data.nav resp.data.nav resp.data.nav  "
+        // );
         cookie.save("Tokken_temp", resp.data.data.tokken, { path: "/" });
         Router.push("/packages_seller");
       } else {
+        // console.warn(
+        //   resp.data,
+        //   "resp.data.nav resp.data.nav resp.data.nav resp.data.nav resp.data.nav resp.data.nav resp.data.nav resp.data.nav resp.data.nav resp.data.nav resp.data.nav resp.data.nav resp.data.nav resp.data.nav resp.data.nav resp.data.nav resp.data.nav resp.data.nav resp.data.nav resp.data.nav resp.data.nav resp.data.nav  "
+        // );
         console.log(cookie.load("Tokken"));
         cookie.save("Tokken", resp.data.data.tokken, { path: "/" });
         Router.push("/dashboard/feed");

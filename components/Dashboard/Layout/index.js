@@ -129,6 +129,10 @@ class Layout extends React.Component {
 
   render() {
     const { selectedOption } = this.state;
+    console.warn(
+      this.props.user_data,
+      "this.props.user_data.role_id this.props.user_data.role_id this.props.user_data.role_id this.props.user_data.role_id this.props.user_data.role_id this.props.user_data.role_id this.props.user_data.role_id this.props.user_data.role_id this.props.user_data.role_id this.props.user_data.role_id this.props.user_data.role_id this.props.user_data.role_id this.props.user_data.role_id this.props.user_data.role_id this.props.user_data.role_id   "
+    );
     return (
       <>
         <div id="wrapper">
@@ -156,6 +160,14 @@ class Layout extends React.Component {
             </div>
           ) : null}
           <div class="sidebar">
+            {/* <div class="sidebar_header uk-visible@s border-b border-gray-200 from-gray-100 to-gray-50 bg-gradient-to-t">
+              <Link href="/">
+                <a>
+                  <img src="/images/Stylicle-Icon.svg" alt="" />
+                  <img src="/images/footerlogo.svg" class="logo_inverse" />
+                </a>
+              </Link>
+            </div> */}
             <div class="sidebar_header border-b border-gray-200 from-gray-100 to-gray-50 bg-gradient-to-t  uk-visible@s">
               <Link href="/">
                 <a>
@@ -177,13 +189,13 @@ class Layout extends React.Component {
                 options={options}
               /> */}
               <div>
-                <div>
+                {/* <div>
                   <h5 className="mt-0, ml-3">
                     {this.props.user_data.business == null
                       ? "Wellcome Seller"
                       : "Wellcome Buyer"}
                   </h5>
-                </div>
+                </div> */}
                 {/* <select
                   onChange={(e) => this.hendalChangeGroup(e.target.value)}
                   className="shadow-none mt-3 ml-3 border rounded py-2"
@@ -258,6 +270,8 @@ class Layout extends React.Component {
 
                 {this.props.user_data.role_id == "1" ||
                 this.props.user_data.role_id == "0" ? (
+                  // {this.props.user_data.role_id == "1" ||
+                  // this.props.user_data.role_id == "0" ? (
                   <>
                     <li
                       onClick={() =>
