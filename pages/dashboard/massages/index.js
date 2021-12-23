@@ -46,7 +46,7 @@ export default class Messenger extends React.Component {
         },
       });
     });
-    this.socket = io("ws://api.stylicle.com:8900");
+    this.socket = io("https://api.stylicle.com:8900");
     this.socket.on("getMessage", (data) => {
       this.arriveMassage(data);
     });

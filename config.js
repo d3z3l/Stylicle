@@ -17,7 +17,7 @@ export default {
   // image_url: "http://127.0.0.1:8080/img/users/",
   // URL:"http://ec2-3-14-67-56.us-east-2.compute.amazonaws.com/api/api/v1/",
   // image_url:"http://ec2-3-14-67-56.us-east-2.compute.amazonaws.com/img/users/",
-  Tokken: "u4cvgaruuz8ijhzblutrg56dvl1rv0mh",
+  // Tokken: "u4cvgaruuz8ijhzblutrg56dvl1rv0mh",
   Guest_auth_id: "u4cvgaruuz8ijhzblutrg56dvl1rv0mh",
   currency_symbols: "£",
   currency_code: "GBP",

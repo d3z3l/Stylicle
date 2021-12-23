@@ -1,24 +1,24 @@
 // import Cookies from "js-cookie";
-import cookie from 'react-cookies'
+import cookie from "react-cookies";
 
-import Router from 'next/router'
-const jwt = require('jsonwebtoken');
+import Router from "next/router";
+const jwt = require("jsonwebtoken");
 
 import config from "../config";
 const Login = async (data) => {
   return new Promise((resolve, reject) => {
-    var path="users/login"
-    var type='post'
+    var path = "users/login";
+    var type = "post";
     fetch(config.URL + path, {
       method: type,
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify(data),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
     })
       .then((res) => res.json())
       .then(async (resjson) => {
         resolve({
           status: true,
-          data: resjson
+          data: resjson,
         });
       })
       .catch((err) => {
@@ -28,18 +28,18 @@ const Login = async (data) => {
 };
 const Signup = async (data) => {
   return new Promise((resolve, reject) => {
-    var path="users/register"
-    var type='post'
+    var path = "users/register";
+    var type = "post";
     fetch(config.URL + path, {
       method: type,
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify(data),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
     })
       .then((res) => res.json())
       .then(async (resjson) => {
         resolve({
           status: true,
-          data: resjson
+          data: resjson,
         });
       })
       .catch((err) => {
@@ -49,18 +49,21 @@ const Signup = async (data) => {
 };
 const Signup_group = async (data) => {
   return new Promise((resolve, reject) => {
-    var path="users/register"
-    var type='post'
+    var path = "users/register";
+    var type = "post";
     fetch(config.URL + path, {
       method: type,
-      headers:{"Content-Type":"application/json","Authorization": cookie.load('Tokken')},
-      body:JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: cookie.load("Tokken"),
+      },
+      body: JSON.stringify(data),
     })
       .then((res) => res.json())
       .then(async (resjson) => {
         resolve({
           status: true,
-          data: resjson
+          data: resjson,
         });
       })
       .catch((err) => {
@@ -70,34 +73,38 @@ const Signup_group = async (data) => {
 };
 const Varification = async (data) => {
   return new Promise((resolve, reject) => {
-    let status=''
+    let status = "";
     try {
-      let Authenticated = jwt.verify(cookie.load('Tokken'),'erger34I&IY&IYI&TUI&TU^&TT*&G*&G&^T');
-      status='authorize'
+      let Authenticated = jwt.verify(
+        cookie.load("Tokken"),
+        "erger34I&IY&IYI&TUI&TU^&TT*&G*&G&^T"
+      );
+      status = "authorize";
     } catch (e) {
-      status='unauthorize'
+      status = "unauthorize";
     }
 
     resolve({
-      status:status
-    })
-        
-     
+      status: status,
+    });
   });
 };
 const Get = async () => {
   return new Promise((resolve, reject) => {
-    var path="users/"
-    var type='get'
+    var path = "users/";
+    var type = "get";
     fetch(config.URL + path, {
       method: type,
-      headers:{"Content-Type":"application/json","Authorization": cookie.load('Tokken')},
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: cookie.load("Tokken"),
+      },
     })
       .then((res) => res.json())
       .then(async (resjson) => {
         resolve({
           status: true,
-          data: resjson
+          data: resjson,
         });
       })
       .catch((err) => {
@@ -105,34 +112,34 @@ const Get = async () => {
       });
   });
 };
-const getAllsellers = async (category='',page='',_type='',data ) => {
-    // var type=type
+const getAllsellers = async (category = "", page = "", _type = "", data) => {
+  // var type=type
   return new Promise((resolve, reject) => {
-    var path="users/getAllsellers"
+    var path = "users/getAllsellers";
     console.log(_type);
-    console.log(category!='');
-    if (category!='') {
-      if (_type=='service') {
-        path+='?service_id='+category
-      }else{
-        path+='?category_id='+category
+    console.log(category != "");
+    if (category != "") {
+      if (_type == "service") {
+        path += "?service_id=" + category;
+      } else {
+        path += "?category_id=" + category;
       }
     }
-    if (page!='') {
-       path+='?page='+page
+    if (page != "") {
+      path += "?page=" + page;
     }
     console.log(path);
-    var type='post'
+    var type = "post";
     fetch(config.URL + path, {
       method: type,
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify(data),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
     })
       .then((res) => res.json())
       .then(async (resjson) => {
         resolve({
           status: true,
-          data: resjson
+          data: resjson,
         });
       })
       .catch((err) => {
@@ -140,24 +147,24 @@ const getAllsellers = async (category='',page='',_type='',data ) => {
       });
   });
 };
-const getAllsellersAdmin = async (category='',page='',_type='' ) => {
-    // var type=type
+const getAllsellersAdmin = async (category = "", page = "", _type = "") => {
+  // var type=type
   return new Promise((resolve, reject) => {
-    var path="users/getAllsellersAdmin"
+    var path = "users/getAllsellersAdmin";
     console.log(_type);
-    if (page!='') {
-       path+='?page='+page
+    if (page != "") {
+      path += "?page=" + page;
     }
-    var type='get'
+    var type = "get";
     fetch(config.URL + path, {
       method: type,
-      headers:{"Content-Type":"application/json"},
+      headers: { "Content-Type": "application/json" },
     })
       .then((res) => res.json())
       .then(async (resjson) => {
         resolve({
           status: true,
-          data: resjson
+          data: resjson,
         });
       })
       .catch((err) => {
@@ -165,24 +172,24 @@ const getAllsellersAdmin = async (category='',page='',_type='' ) => {
       });
   });
 };
-const getAllbuyersAdmin = async (category='',page='',_type='' ) => {
-    // var type=type
+const getAllbuyersAdmin = async (category = "", page = "", _type = "") => {
+  // var type=type
   return new Promise((resolve, reject) => {
-    var path="users/getAllbuyersAdmin"
+    var path = "users/getAllbuyersAdmin";
     console.log(_type);
-    if (page!='') {
-       path+='?page='+page
+    if (page != "") {
+      path += "?page=" + page;
     }
-    var type='get'
+    var type = "get";
     fetch(config.URL + path, {
       method: type,
-      headers:{"Content-Type":"application/json"},
+      headers: { "Content-Type": "application/json" },
     })
       .then((res) => res.json())
       .then(async (resjson) => {
         resolve({
           status: true,
-          data: resjson
+          data: resjson,
         });
       })
       .catch((err) => {
@@ -192,18 +199,18 @@ const getAllbuyersAdmin = async (category='',page='',_type='' ) => {
 };
 const Get_by_id = async (id) => {
   return new Promise((resolve, reject) => {
-    var path="users/getUser_by_id/"+id
+    var path = "users/getUser_by_id/" + id;
     console.log(path);
-    var type='get'
+    var type = "get";
     fetch(config.URL + path, {
       method: type,
-      headers:{"Content-Type":"application/json"},
+      headers: { "Content-Type": "application/json" },
     })
       .then((res) => res.json())
       .then(async (resjson) => {
         resolve({
           status: true,
-          data: resjson
+          data: resjson,
         });
       })
       .catch((err) => {
@@ -213,18 +220,21 @@ const Get_by_id = async (id) => {
 };
 const Update_temp = async (data) => {
   return new Promise((resolve, reject) => {
-    var path="users/"
-    var type='PATCH'
+    var path = "users/";
+    var type = "PATCH";
     fetch(config.URL + path, {
       method: type,
-      headers:{"Content-Type":"application/json","Authorization": cookie.load('Tokken_temp')},
-      body:JSON.stringify(data)
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: cookie.load("Tokken_temp"),
+      },
+      body: JSON.stringify(data),
     })
       .then((res) => res.json())
       .then(async (resjson) => {
         resolve({
           status: true,
-          data: resjson
+          data: resjson,
         });
       })
       .catch((err) => {
@@ -234,23 +244,27 @@ const Update_temp = async (data) => {
 };
 const Update = async (data) => {
   return new Promise((resolve, reject) => {
-    if (data.id!=undefined) {
-      var path="users/"+data.id
+    if (data.id != undefined) {
+      var path = "users/" + data.id;
     } else {
-      var path="users/"
+      var path = "users/";
     }
-   
-    var type='PATCH'
+    if (data.new_seller == true) {
+      var token_ = cookie.load("Tokken_temp");
+    } else {
+      var token_ = cookie.load("Tokken");
+    }
+    var type = "PATCH";
     fetch(config.URL + path, {
       method: type,
-      headers:{"Content-Type":"application/json","Authorization": cookie.load('Tokken')},
-      body:JSON.stringify(data)
+      headers: { "Content-Type": "application/json", Authorization: token_ },
+      body: JSON.stringify(data),
     })
       .then((res) => res.json())
       .then(async (resjson) => {
         resolve({
           status: true,
-          data: resjson
+          data: resjson,
         });
       })
       .catch((err) => {
@@ -258,20 +272,23 @@ const Update = async (data) => {
       });
   });
 };
-const Update_by_id = async (id,data) => {
+const Update_by_id = async (id, data) => {
   return new Promise((resolve, reject) => {
-    var path="users/"+id
-    var type='PATCH'
+    var path = "users/" + id;
+    var type = "PATCH";
     fetch(config.URL + path, {
       method: type,
-      headers:{"Content-Type":"application/json","Authorization": cookie.load('Tokken')},
-      body:JSON.stringify(data)
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: cookie.load("Tokken"),
+      },
+      body: JSON.stringify(data),
     })
       .then((res) => res.json())
       .then(async (resjson) => {
         resolve({
           status: true,
-          data: resjson
+          data: resjson,
         });
       })
       .catch((err) => {
@@ -281,17 +298,20 @@ const Update_by_id = async (id,data) => {
 };
 const groups = async () => {
   return new Promise((resolve, reject) => {
-    var path="users/groups"
-    var type='get'
+    var path = "users/groups";
+    var type = "get";
     fetch(config.URL + path, {
       method: type,
-      headers:{"Content-Type":"application/json","Authorization": cookie.load('Tokken')},
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: cookie.load("Tokken"),
+      },
     })
       .then((res) => res.json())
       .then(async (resjson) => {
         resolve({
           status: true,
-          data: resjson
+          data: resjson,
         });
       })
       .catch((err) => {
@@ -301,19 +321,21 @@ const groups = async () => {
 };
 const groups_tocken = async (data) => {
   return new Promise((resolve, reject) => {
-    var path="users/groups_tocken"
-    var type='POST'
+    var path = "users/groups_tocken";
+    var type = "POST";
     fetch(config.URL + path, {
       method: type,
-      headers:{"Content-Type":"application/json","Authorization": cookie.load('Tokken')},
-      body:JSON.stringify(data)
-
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: cookie.load("Tokken"),
+      },
+      body: JSON.stringify(data),
     })
       .then((res) => res.json())
       .then(async (resjson) => {
         resolve({
           status: true,
-          data: resjson
+          data: resjson,
         });
       })
       .catch((err) => {
@@ -323,18 +345,21 @@ const groups_tocken = async (data) => {
 };
 const ResetPass = async (data) => {
   return new Promise((resolve, reject) => {
-    var path="users/password/"
-    var type='PATCH'
+    var path = "users/password/";
+    var type = "PATCH";
     fetch(config.URL + path, {
       method: type,
-      headers:{"Content-Type":"application/json","Authorization": cookie.load('Tokken')},
-      body:JSON.stringify(data)
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: cookie.load("Tokken"),
+      },
+      body: JSON.stringify(data),
     })
       .then((res) => res.json())
       .then(async (resjson) => {
         resolve({
           status: true,
-          data: resjson
+          data: resjson,
         });
       })
       .catch((err) => {
@@ -358,5 +383,5 @@ export default {
   Update_temp,
   Update_by_id,
   groups,
-  groups_tocken
+  groups_tocken,
 };

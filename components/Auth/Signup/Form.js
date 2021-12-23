@@ -3,6 +3,7 @@ import Link from "next/link";
 import AuthHelper from "../../../Helpers/AuthHelper";
 import WorkinghoursHelper from "../../../Helpers/WorkinghoursHelper";
 import Router from "next/router";
+import cookie from "react-cookies";
 
 export default class Header extends React.Component {
   constructor(props) {
@@ -17,6 +18,7 @@ export default class Header extends React.Component {
       c_password: "",
       messages: "",
       checked: false,
+      seller_packages: "",
     };
   }
   handleLogin = () => {
@@ -61,28 +63,50 @@ export default class Header extends React.Component {
     // });
     AuthHelper.Signup(data).then((resp) => {
       if (resp.data.status != "success") {
-        // console.log(resp.data.status);
-        // console.log(resp.data.resjson);
         let str = JSON.stringify(resp.data.status);
         let sik = JSON.stringify(resp.data);
-        // console.log(sik, "sik  sik sik sik sik sik sik sik ");
-        // console.log(resp.data.keyPattern.email, "sikandar ");
         if (resp.data.keyPattern.email === 1) {
           this.setState({ messages: "already used email" });
         } else if (resp.data.keyPattern.name === 1) {
           this.setState({ messages: "username already exit" });
         }
-        // str = str.replace(/"/g, " ");
-        // str = str.replace(/`/g, " ");
-        // str = str.substring(1, str.length - 1);
-        // this.setState({ messages: str });
       } else if (resp.data.status == "success") {
+        AuthHelper.Login(data).then((resp) => {
+          if (resp.data.status != "success") {
+            this.setState({ messages: resp.data.status });
+          } else if (resp.data.nav == "packages") {
+            cookie.save("Tokken_temp", resp.data.data.tokken, { path: "/" });
+            this.setState({ seller_packages: resp.data.nav });
+            var seller_packages = resp.data.nav;
+            // Router.push("/packages_seller");
+          } else {
+            cookie.save("Tokken", resp.data.data.tokken, { path: "/" });
+            AuthHelper.Get(data).then((resp) => {
+              if (resp.data.status != "success") {
+                this.setState({ messages: resp.data.status });
+              } else {
+                // var _id = resp.data.data.user._id;
+                let data = { _id: resp.data.data.user._id };
+                WorkinghoursHelper.create(data).then((resp) => {
+                  if ((resp.data.status = "success")) {
+                    if (this.seller_packages == "packages") {
+                      Router.push("/packages_seller");
+                    } else {
+                      Router.push("/auth/login");
+                    }
+                  }
+                });
+              }
+            });
+            // Router.push("/dashboard/feed");
+          }
+        });
         // console.log(
         //   resp.data.data,
         //   "resp.data.data resp.data.data resp.data.data resp.data.data resp.data.data resp.data.data resp.data.data "
         // );
         // console.log("sikandar ali");
-        Router.push("/auth/login");
+        // Router.push("/auth/login");
         // Router.push("/dashboard/feed");
         // let data = { _id: resp.data.data.newUser?._id };
         // WorkinghoursHelper.create(data).then((resp) => {
